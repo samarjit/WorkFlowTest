@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+ "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+ "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+    <package name="hello" extends="struts-default">
+        <action name="HelloWorldAction"
+         class="com.org.action.HelloWorld" method="viewSuccess">
+            <result>
+               /jsp/login.jsp
+            </result>
+        </action>
+        <action name="viewPageAction"
+         class="com.org.action.HelloWorld" method="viewPage">
+            <result>
+                /jsp/success.jsp
+            </result>
+        </action>
+        <action name="callWorkFlowAction"
+         class="com.org.action.HelloWorld" method="callWorkFlow">
+            <result>
+                /jsp/success.jsp
+            </result>
+        </action>
+        <action name="restoreWorkflowAction"
+         class="com.org.action.HelloWorld" method="restoreWorkflow">
+            <result>
+                /jsp/success.jsp
+            </result>
+        </action>
+    </package>
+    <package name="workflow" extends="struts-default">
+    	<action name="loginValidation"
+         class="com.org.action.LoginAction">
+            <result name="success" type="redirectAction">callWorkflowTask     
+            </result>
+			 <result name="login">/jsp/login.jsp</result>
+        </action>
+		<action name="callWorkflowTask"
+         class="com.org.action.WorkFlowAction">
+            <result>/jsp/success.jsp</result>
+			<result name="start">/jsp/getDetails.jsp</result>
+			<result name="getDetails">/jsp/confirm.jsp</result>
+			<result name="confirm">/jsp/save.jsp</result>
+			<result name="save">/jsp/success.jsp</result>
+        </action>
+		<action name="getDetailAction"
+         class="com.org.action.DetailsAction" method="getDetails">
+            <result name="success" type="redirectAction">callWorkflowTask     
+            </result>
+			 <result name="login">/jsp/login.jsp</result>
+        </action>
+		<action name="searchWorkflow"
+         class="com.org.action.SearchWorkAction">
+            <result name="success">/jsp/searchWorkflow.jsp     
+            </result>
+        </action>
+		
+	 </package>
+</struts>

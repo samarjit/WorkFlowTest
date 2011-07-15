@@ -1,0 +1,48 @@
+body{
+	font-family: Helvetica;
+}
+div {
+	background-color: #bebfb0; 
+	padding: 5px;
+	border-radius:6px;
+	-moz-border-radius: 6px;
+	margin: 1px;
+} 
+pre{
+	background-color: #DADADA; 
+	padding: 5px;
+	border-radius:6px;
+	-moz-border-radius: 6px;
+	margin: 1px;
+}
+
+div.panel {
+	background-color: #e4e4de;; 
+	padding: 5px;
+	border-radius:6px;
+	-moz-border-radius: 6px;
+	margin: 1px;
+} 
+div.query {
+	background-color: #d5d3bb;; 
+	padding: 5px;
+	border-radius:6px;
+	-moz-border-radius: 6px;
+	margin: 1px;
+	font-family: monospace;
+	display: inline-block;
+} 
+div.field {
+	background-color: #C6C6C4; 
+	padding: 5px;
+	border-radius:6px;
+	-moz-border-radius: 6px;
+	margin: 1px;
+	font-family: monospace;
+	display: inline-block;
+	color:  #2e241d;
+}
+
+div.panel h2 span{
+	font-family: monospace;
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+		"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="org.jbpm.samarjit.dao.DBActivitiMapper">
+	<resultMap type="org.jbpm.samarjit.dto.ActRuExecution" id="selectTask">
+	    <id property="id" column="id" />
+	    <result property="rev" column="rev" />
+		<!--<result property="procInstId" column="procInstId" />
+		--><result property="businessKey" column="businessKey" />
+		<result property="parentId" column="parentId" />
+		<result property="procDefId" column="procDefId" />
+		<result property="superExec" column="superExec" />
+		<result property="actId" column="actId" />
+		<result property="isActive" column="isActive" />
+		<result property="isConcurrent" column="isConcurrent" />
+		<result property="isScope" column="isScope" />
+		<result property="startTime" column="startTime" />
+		<collection property="actRuTasksForProcInstId" column="procInstId" javaType="java.util.ArrayList"   ofType="org.jbpm.samarjit.dto.ActRuTask"
+		select="selectRunTask" ></collection>
+	</resultMap>
+	<select id="selectRunTask"  parameterType="string" resultType="org.jbpm.samarjit.dto.ActRuTask">
+		select ID_ id,REV_ rev, EXECUTION_ID_ executionId,PROC_INST_ID_ procIntId,PROC_DEF_ID_ procDefId,NAME_ name,
+		 PARENT_TASK_ID_ parentTaskId,DESCRIPTION_ description, TASK_DEF_KEY_ taskDefKey,OWNER_ owner,ASSIGNEE_ asignee,
+		 DELEGATION_ delegation,PRIORITY_ priority,CREATE_TIME_ createTime,DUE_DATE_ dueDate, CLASS_NAME_ className   
+		  
+		from ACT_RU_TASK 
+		where   PROC_INST_ID_ = #{procInstId}
+		order by id_ 
+	</select>
+	<select id="selectRunningWorkflows"    
+		resultMap="selectTask">
+		select ID_ id,REV_ rev ,PROC_INST_ID_ procInstId,BUSINESS_KEY_ businessKey,PARENT_ID_ parentId,PROC_DEF_ID_ procDefId,
+		SUPER_EXEC_ superExec,ACT_ID_ actId,IS_ACTIVE_ isActive ,IS_CONCURRENT_ isConcurrent,IS_SCOPE_ isScope,
+		START_TIME_ startTime from ACT_RU_EXECUTION 
+	</select>
+	
+	
+</mapper>

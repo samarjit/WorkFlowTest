@@ -1,0 +1,340 @@
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+.field {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000000;
+	#height: 19px;
+	padding: 1px;
+	width:130px
+}
+.field1 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000000;
+	height: 19px;
+	padding: 1px;
+	width:30px
+}
+.field2 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000000;
+	height: 19px;
+	padding: 1px;
+	width:50px
+}
+
+
+
+.code {
+	border: 0px solid #ccc;
+	overflow: auto;
+	height: 65px;
+	width: 600px;
+	
+}
+.odd {
+	background-color: #FFFFFF;
+	color: #000000;
+}
+
+
+.table1 {
+	border: 1px solid #E2E2E2;
+	background-color: #F0F0F0;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #000000;
+	font-weight: normal;
+}
+
+.table {
+	border: 1px solid #E2E2E2;
+	#background-color: #F0F0F0;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000000;
+	font-weight: normal;
+	text-align: left;
+}
+.table td{
+	font-weight: bold;
+	background-color:#FFFFFF;
+}
+.tables {
+	border: 1px solid #E2E2E2;
+	background-color: #F0F0F0;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000000;
+	font-weight: normal;
+}
+.tables1 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000000;
+	font-weight: normal;
+}
+.even {
+	background-color: #FFFFFF;
+	color: #000000;
+}
+
+.head1 {
+	
+
+	text-align: left;
+	text-indent: 10px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #FFA000;
+	text-transform: uppercase;
+	width: 100%;
+	height: 20px;
+}
+
+.head2 {
+	text-align: left;
+	#text-indent: 10px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #000000;
+	background-color: #DCDCDC;
+}
+.head2 td{
+	padding-left: 10px;
+}
+.star {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #FF0000;
+	text-decoration: none;
+}
+.subtext {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-style: italic;
+	color: #000000;
+}
+.subhead {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: italic;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+.table3 {
+	text-indent: 0px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;
+}
+.table4 {
+	border: 1px solid #E2E2E2;
+	background-color: #F0F0F0;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #000000;
+	font-weight: normal;
+}
+.pgreen {
+	background-color: #F5A300;
+	border: 1px solid #EE7900;
+}
+.pgrey {
+	background-color: #b0b0b0;
+	border: 1px solid #4d4d4d;
+}
+.processtable {
+	background-color: #FDEDCC;
+	padding: 3px;
+	border: 1px solid #F5A300;
+}
+
+.processhead {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #0096DA;
+	background-color: #CCEAF8;
+	margin-bottom: 8px;
+	border: 1px solid #89ceed;
+}
+.process {
+	background-color: #F5F5EA;
+	border: 1px solid #DDDDC0;
+	padding: 8px;
+}
+.top {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000000;	
+}
+
+.top a, .top a:visited{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000000;	
+}
+	
+.top a:hover{
+	color: #000000;
+	text-decoration: underline;	
+}
+.orange {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #FFA000;
+	font-weight: bold;
+}
+
+#mm1
+{
+background:url(../images/menu_orange.gif);
+}
+.but1 {
+	font-family: Arial, Helvetica, sans-serif;
+	
+	color: #FFFFFF;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration:none;
+	background-color:   #FFA000;
+	background-repeat: no-repeat;
+	width: 77px;
+	height: 23px;
+	text-align:center;
+	vertical-align:middle;
+	font-size:115%;
+    line-height:130%;
+	}
+.but {
+	font-family: Arial, Helvetica, sans-serif;
+	
+	color: #FFFFFF;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration:none;
+	background-color:   #FFA000;
+	background-repeat: no-repeat;
+	width: 77px;
+	height: 23px;
+	text-align:center;
+	vertical-align:middle;
+	font-size:90%;
+ 	   line-height:130%;
+	}
+.butadd {
+	font-family: Arial, Helvetica, sans-serif;
+	
+	color: #ffffff;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration:none;
+	background-color:   #ffa000;
+	background-repeat: no-repeat;
+	width: 115px;
+	height: 23px;
+	text-align:center;
+	vertical-align:middle;
+	font-size:90%;
+ 	   line-height:130%;
+	}
+
+.butadd1 {
+	font-family: Arial, Helvetica, sans-serif;
+	
+	color: #FFFFFF;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration:none;
+	background-color:   #FFA000;
+	background-repeat: no-repeat;
+	width: 130px;
+	height: 23px;
+	text-align:center;
+	vertical-align:middle;
+	font-size:90%;
+ 	   line-height:130%;
+	}
+
+.butadd2 {
+	font-family: Arial, Helvetica, sans-serif;
+	
+	color: #FFFFFF;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration:none;
+	background-color:   #FFA000;
+	background-repeat: no-repeat;
+	width: 180px;
+	height: 23px;
+	text-align:center;
+	vertical-align:middle;
+	font-size:90%;
+ 	   line-height:130%;
+	}
+/* tool tip css elements */
+#dhtmltooltip{
+position: absolute;
+width: 150px;
+border: 1px solid black;
+padding: 2px;
+font: 13px;
+background-color: lightyellow;
+visibility: hidden;
+z-index: 100;
+/*Remove below line to remove shadow. Below line should always appear last within this CSS*/
+/*filter: progid:DXImageTransform.Microsoft.Shadow(color=gray,direction=135);*/
+}
+
+.listtable {
+ 
+ 
+	border: 1px solid #e2e2e2;
+	#text-indent: 10px; 
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000000;
+	font-weight: normal;
+}
+.listtable td{
+ # padding:5px;
+  font-weight: bold;
+}
+
+.listtable th{
+	 
+	text-align: left;
+	#text-indent: 10px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #000000;
+	background-color: #DCDCDC;
+}
+
+.trlightgrey{
+	text-align: left;
+	#text-indent: 10px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #000000;
+	background-color: #F0F0F0;
+}
+
+.trlightgrey th,.trlightgrey td{
+	background-color: #F0F0F0;
+	text-align: left;
+}

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<root>
+	<tab name="Program" class="fg-button" id="tab1">
+		<menu name="program setup" position="1" class="mi">
+			<submenu onclick="ProgramSetup.html">program</submenu>
+		
+		</menu>
+		<menu name="program setup485hfd" position="1" class="mi">
+			<submenu onclick="ProgramSetup.html">Program5654</submenu>
+			<submenu onclick="ProgramSetup.html">Bin group54656</submenu>
+			<submenu onclick="ProgramSetup.html">Bin details65654</submenu>
+			<submenu onclick="ProgramSetup.html">Program5654</submenu>
+			<submenu onclick="ProgramSetup.html">Bin group54656</submenu>
+			<submenu onclick="ProgramSetup.html">Bin details65654</submenu>
+		</menu>
+		<menu name="program " position="2" class="mi">
+			<submenu onclick="ProgramSetup.html">Program</submenu>
+			<submenu onclick="ProgramSetup.html">Bin group</submenu>
+			<submenu onclick="ProgramSetup.html">Bin details</submenu>
+		</menu>
+	</tab>
+	<tab name="Entitlement" class="fg-button" id="tab2">
+		<menu name="program setup485hfd" position="3" class="mi">
+			<submenu onclick="ProgramSetup.html">Program</submenu>
+			<submenu onclick="ProgramSetup.html">Bin group</submenu>
+			<submenu onclick="ProgramSetup.html">Bin details</submenu>
+		</menu>
+	</tab>
+	<tab name="Security Management88888" class="fg-button" id="tab3">
+		<menu name="program setup" position="1" class="mi">
+			<submenu onclick="ProgramSetup.html">Program</submenu>
+			<submenu onclick="ProgramSetup.html">Bin group</submenu>
+			<submenu onclick="ProgramSetup.html">Bin details</submenu>
+		</menu>
+	</tab>
+	<tab name="Security Management" class="fg-button" id="tab4">
+		<menu name="program setup" position="1" class="mi">
+			<submenu onclick="ProgramSetup.html">Program</submenu>
+			<submenu onclick="ProgramSetup.html">Bin group</submenu>
+			<submenu onclick="ProgramSetup.html">Bin details</submenu>
+		</menu>
+	</tab>
+	<tab name="Security Management" class="fg-button" id="tab5">
+		<menu name="program setup" position="1" class="mi">
+			<submenu onclick="ProgramSetup.html">Program</submenu>
+			<submenu onclick="ProgramSetup.html">Bin group</submenu>
+			<submenu onclick="ProgramSetup.html">Bin details</submenu>
+		</menu>
+	</tab>
+</root>

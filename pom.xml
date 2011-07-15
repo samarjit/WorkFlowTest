@@ -1,0 +1,338 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>FEtranslator</groupId>
+  <artifactId>FEtranslator</artifactId>
+  <version>v0.1</version>
+  <packaging>war</packaging>
+  <name>JAR for FETranslator</name>
+   <properties>
+    <drools.version>5.3.0-SNAPSHOT</drools.version>
+    <jbpm.version>5.1-SNAPSHOT</jbpm.version>
+    <drools.osgi.version>5.3.0</drools.osgi.version>
+    <!--<jbpm.osgi.version>5.1.0.SNAPSHOT</jbpm.osgi.version>
+  --></properties>
+  
+  <build>
+   <sourceDirectory>src</sourceDirectory>
+   <outputDirectory>${basedir}/build/classes</outputDirectory>
+     
+    <resources>  
+      <resource>  
+        <directory>src</directory>  
+      </resource>  
+    </resources>
+    <plugins>  
+      <plugin>  
+        <groupId>org.apache.maven.plugins</groupId>  
+        <artifactId>maven-war-plugin</artifactId>  
+        <configuration>  
+          <warSourceDirectory>WebContent</warSourceDirectory>  
+        </configuration>  
+         <version>2.1-alpha-2</version>
+      </plugin>  
+    </plugins>
+  </build>   
+  
+  <profiles>
+		<profile>
+		<!-- mvn antrun:run -P start.h2  -->
+		<id>start.h2</id>
+			<build>
+			    <plugins>
+			      <plugin>
+			        <artifactId>maven-antrun-plugin</artifactId>
+			        <version>1.6</version>
+			        <configuration>
+			         <target  id="start.h2">
+			         	<property name="myclasspath" refid="maven.plugin.classpath"/>
+			         	<echo message="starting h2 with classpath ${myclasspath}" />
+			         	<java classname="org.h2.tools.Console" fork="true" spawn="true" >
+					    	<!--<arg value="-tcp" />
+					    	<arg value="-tcpAllowOthers"/>
+					      	<arg value="-tcpPort" />
+					    	<arg value="9092"/>
+					      	<arg value="-web"/>
+					      	<arg value="-webPort"/>
+					      	<arg value="8082"/>
+					    	<arg value="-webAllowOthers"/>
+					      	
+					      --><classpath refid="maven.plugin.classpath" />
+					    </java> 
+			         </target>	 
+			        </configuration>
+			        <dependencies>
+			         	<dependency>
+					      <groupId>com.h2database</groupId>
+					      <artifactId>h2</artifactId>
+					      <version>1.3.150</version>
+					    </dependency>
+			        </dependencies>
+	        		</plugin>
+	        	</plugins>
+        	</build>
+		</profile>
+		<profile>
+		<id>stop.h2</id>
+			<build>
+			    <plugins>
+			      <plugin>
+			        <artifactId>maven-antrun-plugin</artifactId>
+			        <version>1.6</version>
+			        <configuration>
+			         <target  id="start.h2">
+			         	<property name="myclasspath" refid="maven.plugin.classpath"/>
+			         	<echo message="starting h2 with classpath ${myclasspath}" />
+			         	<java classname="org.h2.tools.Server"   >
+					    	<arg value="-tcpShutdown" />
+					    	<arg value="tcp://localhost:9092"/>
+					      <classpath refid="maven.plugin.classpath" />
+					    </java> 
+			         </target>	 
+			        </configuration>
+			        <dependencies>
+			         	<dependency>
+					      <groupId>com.h2database</groupId>
+					      <artifactId>h2</artifactId>
+					      <version>1.3.150</version>
+					    </dependency>
+			        </dependencies>
+	        		</plugin>
+	        	</plugins>
+        	</build>
+		</profile>
+	</profiles>	
+	
+  <dependencies>
+    <dependency>
+	    <groupId>servletapi</groupId>
+	    <artifactId>servlet-api</artifactId>
+	    <version>2.4</version>
+	</dependency>
+    <dependency>
+      <groupId>org.apache.struts</groupId>
+      <artifactId>struts2-core</artifactId>
+      <version>2.2.1.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.struts</groupId>
+    	<artifactId>struts2-convention-plugin</artifactId>
+    	<version>2.2.1.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.struts</groupId>
+    	<artifactId>struts2-config-browser-plugin</artifactId>
+    	<version>2.2.1.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.struts</groupId>
+    	<artifactId>struts2-dojo-plugin</artifactId>
+    	<version>2.2.1.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>net.sf.json-lib</groupId>
+    	<artifactId>json-lib</artifactId>
+    	<version>2.4</version>
+    	<classifier>jdk15</classifier>
+    </dependency>
+    <dependency>
+    	<groupId>dom4j</groupId>
+    	<artifactId>dom4j</artifactId>
+    	<version>1.6.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.jsoup</groupId>
+    	<artifactId>jsoup</artifactId>
+    	<version>1.4.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>log4j</groupId>
+    	<artifactId>log4j</artifactId>
+    	<version>1.2.15</version>
+    	<exclusions>
+    		<exclusion>
+    			<artifactId>jmxri</artifactId>
+    			<groupId>com.sun.jmx</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>jms</artifactId>
+    			<groupId>javax.jms</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>jmxtools</artifactId>
+    			<groupId>com.sun.jdmk</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>mail</artifactId>
+    			<groupId>javax.mail</groupId>
+    		</exclusion>
+    	</exclusions>
+    </dependency>
+    <dependency>
+    	<groupId>com.google.code.gson</groupId>
+    	<artifactId>gson</artifactId>
+    	<version>1.4</version>
+    </dependency>
+    
+    <dependency>
+    	<groupId>com.jgeppert.struts2.jquery</groupId>
+    	<artifactId>struts2-jquery-plugin</artifactId>
+    	<version>2.5.3</version>
+    </dependency>
+    <dependency>
+    	<groupId>ojdbc</groupId>
+    	<artifactId>ojdbc</artifactId>
+    	<version>14</version>
+    </dependency>
+    
+    <dependency>
+    	<groupId>com.h2database</groupId>
+    	<artifactId>h2</artifactId>
+    	<version>1.3.150</version>
+    </dependency>
+    <dependency>
+    	<groupId>xom</groupId>
+    	<artifactId>xom</artifactId>
+    	<version>1.2.5</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>javassist</groupId>
+    	<artifactId>javassist</artifactId>
+    	<version>3.12.1.GA</version>
+    </dependency>
+    <dependency>
+    	<groupId>jaxen</groupId>
+    	<artifactId>jaxen</artifactId>
+    	<version>1.1.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.googlecode.json-simple</groupId>
+    	<artifactId>json-simple</artifactId>
+    	<version>1.1</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.json</groupId>
+    	<artifactId>json</artifactId>
+    	<version>20090211</version>
+    </dependency>
+    <dependency>
+    	<groupId>net.sf.ehcache</groupId>
+    	<artifactId>ehcache</artifactId>
+    	<version>1.6.1</version>
+    </dependency>
+	<dependency>
+    	<groupId>xerces</groupId>
+    	<artifactId>xercesImpl</artifactId>
+    	<version>2.8.0</version>
+    </dependency>
+    <dependency>
+      	<groupId>org.apache.openjpa</groupId>
+      	<artifactId>openjpa</artifactId>
+      	<version>2.0.1</version>
+      	<scope>compile</scope>
+      </dependency>
+    <dependency>
+        <groupId>org.codehaus.btm</groupId>
+        <artifactId>btm</artifactId>
+        <version>1.3.3</version>    		      
+    </dependency>  
+	<dependency>
+		<groupId>org.mybatis</groupId>
+		<artifactId>mybatis</artifactId>
+		<version>3.0.5-20110511.212624-26</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.jbpm</groupId>
+	 	<artifactId>jbpm-bpmn2</artifactId>
+	 	<version>${jbpm.version}</version>
+	</dependency>
+	 <dependency>
+        <groupId>org.drools</groupId>
+        <artifactId>knowledge-api</artifactId>
+        <version>${drools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.drools</groupId>
+        <artifactId>drools-core</artifactId>
+        <version>${drools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.drools</groupId>
+        <artifactId>drools-compiler</artifactId>
+        <version>${drools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.drools</groupId>
+        <artifactId>drools-persistence-jpa</artifactId>
+        <version>${drools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.drools</groupId>
+        <artifactId>drools-persistence-jpa</artifactId>
+        <type>test-jar</type>
+        <version>${drools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mvel</groupId>
+        <artifactId>mvel2</artifactId>
+        <version>2.1.beta2</version>
+      </dependency>
+      
+      
+      <dependency>
+      	<groupId>org.slf4j</groupId>
+      	<artifactId>slf4j-api</artifactId>
+      	<version>1.6.0</version>
+      	<type>jar</type>
+      	<scope>compile</scope>
+      </dependency>
+      <dependency>
+      	<groupId>org.slf4j</groupId>
+      	<artifactId>slf4j-log4j12</artifactId>
+      	<version>1.6.0</version>
+      	<type>jar</type>
+      	<scope>compile</scope>
+      </dependency>
+  </dependencies>
+  <dependencyManagement>
+  	<dependencies>
+  	</dependencies>
+  </dependencyManagement>
+  <repositories>
+    <repository>
+			<id>mybatis-snapshot</id>
+			<name>MyBatis Snapshot Repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+	</repository>
+        <repository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Maven Repository Group</name>
+      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>jboss-snapshot-repository-group</id>
+      <name>JBoss SNAPSHOT Maven Repository Group</name>
+      <url>https://repository.jboss.org/nexus/content/repositories/snapshots/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
+</project>
