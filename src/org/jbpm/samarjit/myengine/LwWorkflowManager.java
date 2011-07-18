@@ -32,8 +32,28 @@ public class LwWorkflowManager {
 		modules.addSemanticModule(new BPMNExtensionsSemanticModule());
 		XmlProcessReader reader = new XmlProcessReader(modules, this.getClass().getClassLoader());
 		reader.read(fileInputStream);
-		processes = reader.getProcess();
+		List<Process> tempProcesses = reader.getProcess();
+		for (Process tempprocess : tempProcesses) {
+			boolean found = false;
+			for (int i =0; i  < processes.size(); i++) {
+				Process process = processes.get(i);
+				if(process.getId().equals( tempprocess.getId())){
+					processes.set(i, tempprocess);
+					found = true;
+				}
+			}
+			if(!found){
+				processes.add(tempprocess);
+			}
+		}
 		return processes;
+	}
+	
+	public int createProcess(String processId ){
+		if(processes.size() > 0){
+			return 0;
+		}
+		return -1;
 	}
 	
 	public Node getStartNode(){
@@ -42,23 +62,84 @@ public class LwWorkflowManager {
 			System.out.println(node instanceof StartNode);
 			return node;
 		}
+		 
 		return null;
 	}
 
-	public void doWork(WorkflowProcess process, Node currentNode) {
-		System.out.println("Done work for "+currentNode.getName());
+	public long getStartNodeId(){
+		WorkflowProcess process = (WorkflowProcess) processes.get(0);
+		for (Node node : process.getNodes()) {
+			System.out.println(node instanceof StartNode);
+			return node.getId();
+		}
+		 
+		return -1;
+	}
+	
+	public void doWork(int processId, Node currentNode) {
+		System.out.println("Done work for Node#"+currentNode.getName());
+	}
+	public void doWork(int processId, long nodeId) {
+		Node currentNode = getNodeById(processId, nodeId);
+		System.out.println("Done work for Node#"+currentNode.getName());
 	}
 
-	public List<Node> getCurrentTasks(WorkflowProcess process, Node currentNode) {
+	public List<Node> getCurrentTasks(int processId, Node currentNode) {
 		Map<String, List<Connection>> connections = currentNode.getOutgoingConnections();
 		List<Node> nodes = new ArrayList<Node>();
 		for (Entry<String, List<Connection>> itr : connections.entrySet()) {
 //			System.out.println("connection key::"+itr.getKey());
 			for (Connection connection : itr.getValue()) {
-				System.out.println("connection::"+connection.getTo());
+				System.out.println("connection::"+connection.toString());
 				nodes.add(connection.getTo());
 			}
 		}
 		return nodes;
+	}
+	public List<Node> getCurrentTasks(int processId, long nodeId) {
+		Node currentNode = getNodeById(processId, nodeId);
+		Map<String, List<Connection>> connections = currentNode.getOutgoingConnections();
+		List<Node> nodes = new ArrayList<Node>();
+		for (Entry<String, List<Connection>> itr : connections.entrySet()) {
+//			System.out.println("connection key::"+itr.getKey());
+			for (Connection connection : itr.getValue()) {
+				System.out.println("connection::"+connection.toString());
+				nodes.add(connection.getTo());
+			}
+		}
+		return nodes;
+	}
+	
+	public Node getNodeById(int processId, long nodeId){
+		WorkflowProcess process = (WorkflowProcess) processes.get(processId);
+		for (Node node : process.getNodes()) {
+			if(nodeId == node.getId())
+			return node;
+		}
+		return null;
+	}
+	
+	public Node getNodeByName(int processId, String nodeName){
+		WorkflowProcess process = (WorkflowProcess) processes.get(processId);
+		for (Node node : process.getNodes()) {
+			if(nodeName.equals(node.getName()))
+			return node;
+		}
+		return null;
+	}
+
+	public void setProcesses(List<Process> processobject) {
+		processes  =  processobject;
+	}
+	public List<Process> getProcesses(int processId) {
+		return processes;
+	}
+	public Process getProcess(String processId){
+		for (Process process : processes) {
+			if(process.getId().equals(processId))
+				return process;
+			
+		}
+		return null;
 	}
 }

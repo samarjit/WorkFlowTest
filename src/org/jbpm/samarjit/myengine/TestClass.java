@@ -29,32 +29,33 @@ public class TestClass {
 //			System.out.println(node instanceof StartNode);
 //			System.out.println(node.getId());
 		}
+		int processId = wflmgr.createProcess("0");
 		Node currentNode  = wflmgr.getStartNode();
-		wflmgr.doWork( process, currentNode );
-		List<Node>nodes = wflmgr.getCurrentTasks(process, currentNode);
+		wflmgr.doWork( processId, currentNode );
+		List<Node>nodes = wflmgr.getCurrentTasks(processId, currentNode);
 		
 		System.out.println(nodes.get(0).getName()+"::"+nodes.get(0).getId());
-		wflmgr.doWork( process,nodes.get(0)); //script
+		wflmgr.doWork( processId,nodes.get(0)); //script
 		
-		nodes = wflmgr.getCurrentTasks(process, nodes.get(0));
+		nodes = wflmgr.getCurrentTasks(processId, nodes.get(0));
 		System.out.println(nodes); //split
 		
-		wflmgr.doWork( process,nodes.get(0)); 
+		wflmgr.doWork( processId,nodes.get(0)); 
 		
-		nodes = wflmgr.getCurrentTasks(process, nodes.get(0));
+		nodes = wflmgr.getCurrentTasks(processId, nodes.get(0));
 		System.out.println(nodes); //Human task nodes 2
 				
 		
-		wflmgr.doWork( process,nodes.get(0)); 
-		wflmgr.doWork( process,nodes.get(1));
-		nodes = wflmgr.getCurrentTasks(process, nodes.get(0));
+		wflmgr.doWork( processId,nodes.get(0)); 
+		wflmgr.doWork( processId,nodes.get(1));
+		nodes = wflmgr.getCurrentTasks(processId, nodes.get(0));
 
-		wflmgr.doWork( process,nodes.get(0));
-		nodes = wflmgr.getCurrentTasks(process, nodes.get(0));
+		wflmgr.doWork( processId,nodes.get(0));
+		nodes = wflmgr.getCurrentTasks(processId, nodes.get(0));
 		System.out.println(nodes); //Join
 		
-		wflmgr.doWork( process,nodes.get(0));
-		nodes = wflmgr.getCurrentTasks(process, nodes.get(0));
+		wflmgr.doWork( processId,nodes.get(0));
+		nodes = wflmgr.getCurrentTasks(processId, nodes.get(0));
 		System.out.println(nodes); //End
 	}
 	
