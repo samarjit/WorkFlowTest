@@ -97,8 +97,8 @@
         </resourceAssignmentExpression>
       </potentialOwner>
     </userTask>
-    <complexGateway id="_7" name="Gateway" gatewayDirection="Diverging" />
-    <complexGateway id="_8" name="Gateway" gatewayDirection="Converging" />
+    <parallelGateway id="_7" name="Split" gatewayDirection="Diverging" />
+    <parallelGateway id="_8" name="Join" gatewayDirection="Converging" />
 
     <!-- connections -->
     <sequenceFlow id="_1-_2" sourceRef="_1" targetRef="_2" />

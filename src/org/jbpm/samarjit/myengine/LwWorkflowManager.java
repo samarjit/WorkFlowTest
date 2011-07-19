@@ -1,7 +1,7 @@
 package org.jbpm.samarjit.myengine;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class LwWorkflowManager {
 
 	private List<Process> processes = null;
 
-	public Object readWorkflowFiles(FileInputStream fileInputStream) throws SAXException, IOException {
+	public Object readWorkflowFiles(InputStream fileInputStream) throws SAXException, IOException {
 		SemanticModules modules = new SemanticModules();
 //		modules.addSemanticModule(new ProcessSemanticModule());
 		// modules.initSemanticModules();
@@ -33,9 +33,10 @@ public class LwWorkflowManager {
 		XmlProcessReader reader = new XmlProcessReader(modules, this.getClass().getClassLoader());
 		reader.read(fileInputStream);
 		List<Process> tempProcesses = reader.getProcess();
+		if(processes == null)processes = new ArrayList<Process>();
 		for (Process tempprocess : tempProcesses) {
 			boolean found = false;
-			for (int i =0; i  < processes.size(); i++) {
+			for (int i =0; processes!= null && i  <  processes.size() ; i++) {
 				Process process = processes.get(i);
 				if(process.getId().equals( tempprocess.getId())){
 					processes.set(i, tempprocess);
@@ -103,7 +104,7 @@ public class LwWorkflowManager {
 		for (Entry<String, List<Connection>> itr : connections.entrySet()) {
 //			System.out.println("connection key::"+itr.getKey());
 			for (Connection connection : itr.getValue()) {
-				System.out.println("connection::"+connection.toString());
+				System.out.println("getcurrenttaks::"+connection.toString());
 				nodes.add(connection.getTo());
 			}
 		}

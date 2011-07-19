@@ -59,7 +59,7 @@ public class WorkflowAction extends ActionSupport implements ApplicationAware{
 			}else{
 				if(command.equals("readfiles")){
 					System.out.println("locading bpmn files and then caching ..." );
-					List<Process> processes = (List<Process>) wflmgr.readWorkflowFiles(new FileInputStream("bpmnfiles/lightweight.bpmn2"));
+					List<Process> processes = (List<Process>) wflmgr.readWorkflowFiles(getClass().getClassLoader().getResourceAsStream("bpmnfiles/lightweight.bpmn2"));
 					appContext.put("LW_PROCESS", processes);
 					
 				}
@@ -86,7 +86,10 @@ public class WorkflowAction extends ActionSupport implements ApplicationAware{
 						String temp = "";
 						boolean first = true;
 						for (Node node : nodeList) {
-							temp += (first)?"":","+"{id:"+node.getId()+", name: '"+ node.getName()+"'}";
+							temp += (first)?"":",";
+							temp += "{id:" + node.getId() + ", name: '" + node.getName() + "'}";
+							System.out.println("{id:"+node.getId()+", name: '"+ node.getName()+"'}"+temp);
+							first = false;
 						}
 						resultHtml = "{currenttasks:["+temp+"]}";
 					}
@@ -117,7 +120,7 @@ public class WorkflowAction extends ActionSupport implements ApplicationAware{
 			String tmpStack="";
 			StackTraceElement[]  elm = e.getStackTrace();
 			for (int i =0 ; i< elm.length && i < 4; i++ ) {
-				tmpStack += "at "+elm[i]+"\n";
+				tmpStack += " at "+elm[i]+"\n";
 			}
 			resultHtml = "{error: '"+e.toString()+tmpStack+"'}";
 		}
