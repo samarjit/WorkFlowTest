@@ -3,8 +3,6 @@ package com.ycs.wfl.action;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,29 +13,22 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.ApplicationAware;
 import org.drools.definition.process.Node;
 import org.drools.definition.process.Process;
-import org.drools.runtime.process.NodeInstance;
-import org.drools.runtime.process.ProcessInstance;
-import org.drools.runtime.process.WorkItem;
-import org.jbpm.samarjit.Mytest2;
-import org.jbpm.samarjit.StatelessRuntime;
-import org.jbpm.samarjit.StatelessWorkflowManager;
 import org.jbpm.samarjit.myengine.LwWorkflowManager;
-import org.jbpm.samarjit.mynodeinst.TestWorkItemHandler;
 import org.json.JSONObject;
 
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
- * http://localhost:8182/WorkFlow/wfl.action?command=readfiles&instanceid=0&nodeid=2
- * http://localhost:8182/WorkFlow/wfl.action?command=getprocesslist&instanceid=0&nodeid=2
- * http://localhost:8182/WorkFlow/wfl.action?command=getstartnode&processid=lwtworkflowId&nodeid=1
- * http://localhost:8182/WorkFlow/wfl.action?command=getcurrenttasks&processid=lwtworkflowId&nodeid=7
- * http://localhost:8182/WorkFlow/wfl.action?command=dowork&&processid=lwtworkflowId&nodeid=2
+ * http://localhost:8182/WorkFlow/lwwfl.action?command=readfiles&instanceid=0&nodeid=2
+ * http://localhost:8182/WorkFlow/lwwfl.action?command=getprocesslist&instanceid=0&nodeid=2
+ * http://localhost:8182/WorkFlow/lwwfl.action?command=getstartnode&processid=lwtworkflowId&nodeid=1
+ * http://localhost:8182/WorkFlow/lwwfl.action?command=getcurrenttasks&processid=lwtworkflowId&nodeid=7
+ * http://localhost:8182/WorkFlow/lwwfl.action?command=dowork&&processid=lwtworkflowId&nodeid=2
  * 
  * @author Samarjit
  *
  */
-public class  WorkflowAction extends ActionSupport implements ApplicationAware{
+public class LwWorkflowAction extends ActionSupport implements ApplicationAware{
 	
  
 	private static final long serialVersionUID = 1L;
@@ -65,66 +56,54 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 		try {
 			JSONObject jobj = new JSONObject("{'name':'hello world'}");
 			resultHtml = jobj.toString();
-			StatelessWorkflowManager swflMgr = new StatelessWorkflowManager();
+			LwWorkflowManager wflmgr = new LwWorkflowManager();
 			ArrayList<String> errors = new ArrayList<String>();
 			System.out.println("command:"+command);
 			System.out.println("processid:"+processid);
 			System.out.println("instanceid:"+processid);
 			System.out.println("nodeid:"+nodeid);
 
-			if(appContext.containsKey("W_PROCESS")){
-				swflMgr = (StatelessWorkflowManager) appContext.get("W_PROCESS");
-			}
+			wflmgr.setProcesses((Map<String, Process>) appContext.get("LW_PROCESS"));
 			
 			if(command == null || "".equals(command)){
 				errors.add("command is missing in request");
 			}else{
 				if(command.equals("readfiles")){
 					System.out.println("locading bpmn files and then caching ..." );
+					Map<String, Process> processes = (Map<String, Process>) wflmgr.readWorkflowFiles(getClass().getClassLoader().getResourceAsStream("bpmnfiles/lightweight.bpmn2"));
+					appContext.put("LW_PROCESS", processes);
 					
-					List<Process> processes = swflMgr.readWorkflowFiles(Mytest2.class.getResourceAsStream("Evaluation.bpmn"));
-					appContext.put("W_PROCESS", swflMgr);
-					
-				}
-				if(command.equals("restoresessions")){
-					swflMgr.restoreWorkflowSession();
-					appContext.put("W_PROCESS", swflMgr);
 				}
 				if(command.equals("getprocesslist")){
-					  Collection<ProcessInstance> processesInstances = swflMgr.getRuntime().getProcessInstanceManager().getProcessInstances();
-					String temp = "";
-					boolean first = true;
-					for (Iterator procItr = processesInstances.iterator(); procItr.hasNext();) {
-						ProcessInstance processInstance = (ProcessInstance) procItr.next();
-						temp += (first)?"":",";
-						temp += processInstance.getProcessId();
-						
-					} 
-					resultHtml = "{processlist: ["+temp+"]";
+					Map<String, Process> processes = wflmgr.getProcesses();
+					 
+					resultHtml = "{processlist:"+JSONSerializer.toJSON(processes.keySet())+"}";
 				}
 				
 				if(command.equals("createprocess")){
-					long currentProcessInst = swflMgr.startProcess("com.sample.evaluation");
-					instanceid = (int) currentProcessInst;
+					instanceid = wflmgr.createProcess(processid);
 					resultHtml = "{processinstanceid:"+instanceid+", processid: '"+processid+"'}";
 				}
 				
 				if(command.equals("getstartnode")){
-					 
-					resultHtml = "{startnode: 'Not Supported'}";
+					long startNodeId = wflmgr.getStartNodeId(processid);
+					resultHtml = "{startnode:"+startNodeId+"}";
 				}
 				
 				if(command.equals("getcurrenttasks")){
-					if(instanceid == -1){
-						errors.add("instanceid is required");
+					if(processid == null){
+						errors.add("processid is required");
 					}
-					if(instanceid != -1){
-						Collection<NodeInstance> nodeList = swflMgr.getNextTasks(instanceid);
+					if(nodeid == -1){
+						errors.add("nodeid is required");
+					}
+					if(processid != null && nodeid != -1){
+						List<Node> nodeList = wflmgr.getCurrentTasks(processid, nodeid);
 						String temp = "";
 						boolean first = true;
-						for (NodeInstance nodeInstance : nodeList) {
+						for (Node node : nodeList) {
 							temp += (first)?"":",";
-							temp += "{id:" + nodeInstance.getId() + ", name: '" + nodeInstance.getNodeName() + "'}";
+							temp += "{id:" + node.getId() + ", name: '" + node.getName() + "'}";
 							first = false;
 						}
 						System.out.println(temp);
@@ -133,27 +112,16 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 				}
 				
 				if(command.equals("dowork")){
-					if(instanceid == -1){
-						errors.add("instanceid is required");
+					if(processid == null){
+						errors.add("processid is required");
 					}
-					if(instanceid != -1){
-						TestWorkItemHandler workItemHandler = new TestWorkItemHandler();
-						swflMgr.registerWorkItemHandler("Human Task", workItemHandler);
-						WorkItem  workItem = workItemHandler.getWorkItem();
-						  System.out.println("WorkItemID:"+workItem
-								  .getId()+" "+workItem
-								  .getParameters()
-								  .get("Comment"));
-							swflMgr.completeWorkItem(
-									workItem.getId(), 
-									null);
-							System.out.println("Process state?:"+(StatelessRuntime.eINSTANCE
-									.getProcessInstanceManager()
-										.getProcessInstance(instanceid)
-											.getState() == ProcessInstance.STATE_ACTIVE));
-						resultHtml = "{success: 'true', workitemid: "+workItem.getId()+", nodename:'"+workItem.getName()+"', comment: '"+workItem
-						  .getParameters()
-						  .get("Comment")+"'}";
+					if(nodeid == -1){
+						errors.add("nodeid is required");
+					}
+					if(processid != null && nodeid != -1){
+						wflmgr.doWork(processid, nodeid);
+						Node nodeCompleted = wflmgr.getNodeById(processid, nodeid); 
+						resultHtml = "{success: 'true', nodeid: "+nodeid+", nodename:'"+nodeCompleted.getName()+"'}";
 					}
 				}
 				

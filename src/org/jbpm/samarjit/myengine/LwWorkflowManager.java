@@ -3,6 +3,7 @@ package org.jbpm.samarjit.myengine;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,7 +22,7 @@ import org.xml.sax.SAXException;
 
 public class LwWorkflowManager {
 
-	private List<Process> processes = null;
+	private Map<String, Process> processes = null;
 
 	public Object readWorkflowFiles(InputStream fileInputStream) throws SAXException, IOException {
 		SemanticModules modules = new SemanticModules();
@@ -33,19 +34,9 @@ public class LwWorkflowManager {
 		XmlProcessReader reader = new XmlProcessReader(modules, this.getClass().getClassLoader());
 		reader.read(fileInputStream);
 		List<Process> tempProcesses = reader.getProcess();
-		if(processes == null)processes = new ArrayList<Process>();
+		if(processes == null)processes = new HashMap<String, Process>();
 		for (Process tempprocess : tempProcesses) {
-			boolean found = false;
-			for (int i =0; processes!= null && i  <  processes.size() ; i++) {
-				Process process = processes.get(i);
-				if(process.getId().equals( tempprocess.getId())){
-					processes.set(i, tempprocess);
-					found = true;
-				}
-			}
-			if(!found){
-				processes.add(tempprocess);
-			}
+			processes.put(tempprocess.getId(), tempprocess);
 		}
 		return processes;
 	}
@@ -57,6 +48,7 @@ public class LwWorkflowManager {
 		return -1;
 	}
 	
+	@Deprecated
 	public Node getStartNode(){
 		WorkflowProcess process = (WorkflowProcess) processes.get(0);
 		for (Node node : process.getNodes()) {
@@ -67,24 +59,12 @@ public class LwWorkflowManager {
 		return null;
 	}
 
-	public long getStartNodeId(){
-		WorkflowProcess process = (WorkflowProcess) processes.get(0);
-		for (Node node : process.getNodes()) {
-			System.out.println(node instanceof StartNode);
-			return node.getId();
-		}
-		 
-		return -1;
-	}
-	
+	@Deprecated
 	public void doWork(int processId, Node currentNode) {
 		System.out.println("Done work for Node#"+currentNode.getName());
 	}
-	public void doWork(int processId, long nodeId) {
-		Node currentNode = getNodeById(processId, nodeId);
-		System.out.println("Done work for Node#"+currentNode.getName());
-	}
-
+	
+	@Deprecated
 	public List<Node> getCurrentTasks(int processId, Node currentNode) {
 		Map<String, List<Connection>> connections = currentNode.getOutgoingConnections();
 		List<Node> nodes = new ArrayList<Node>();
@@ -97,7 +77,25 @@ public class LwWorkflowManager {
 		}
 		return nodes;
 	}
-	public List<Node> getCurrentTasks(int processId, long nodeId) {
+	
+	public long getStartNodeId(String processId){
+		WorkflowProcess process = (WorkflowProcess) processes.get(processId);
+		for (Node node : process.getNodes()) {
+			System.out.println(node instanceof StartNode);
+			return node.getId();
+		}
+		 
+		return -1;
+	}
+	
+	public int doWork(String processId, long nodeId) {
+		Node currentNode = getNodeById(processId, nodeId);
+		System.out.println("Done work for Node#"+currentNode.getName());
+		//if exception return -1 
+		return 1;
+	}
+	
+	public List<Node> getCurrentTasks(String processId, long nodeId) {
 		Node currentNode = getNodeById(processId, nodeId);
 		Map<String, List<Connection>> connections = currentNode.getOutgoingConnections();
 		List<Node> nodes = new ArrayList<Node>();
@@ -111,7 +109,7 @@ public class LwWorkflowManager {
 		return nodes;
 	}
 	
-	public Node getNodeById(int processId, long nodeId){
+	public Node getNodeById(String processId, long nodeId){
 		WorkflowProcess process = (WorkflowProcess) processes.get(processId);
 		for (Node node : process.getNodes()) {
 			if(nodeId == node.getId())
@@ -120,7 +118,7 @@ public class LwWorkflowManager {
 		return null;
 	}
 	
-	public Node getNodeByName(int processId, String nodeName){
+	public Node getNodeByName(String processId, String nodeName){
 		WorkflowProcess process = (WorkflowProcess) processes.get(processId);
 		for (Node node : process.getNodes()) {
 			if(nodeName.equals(node.getName()))
@@ -129,18 +127,13 @@ public class LwWorkflowManager {
 		return null;
 	}
 
-	public void setProcesses(List<Process> processobject) {
+	public void setProcesses(Map<String, Process> processobject) {
 		processes  =  processobject;
 	}
-	public List<Process> getProcesses(int processId) {
+	public Map<String, Process> getProcesses() {
 		return processes;
 	}
 	public Process getProcess(String processId){
-		for (Process process : processes) {
-			if(process.getId().equals(processId))
-				return process;
-			
-		}
-		return null;
+		return processes.get(processId);
 	}
 }
