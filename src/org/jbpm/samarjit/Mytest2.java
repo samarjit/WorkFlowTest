@@ -134,7 +134,7 @@ public class Mytest2 {
 		TestWorkItemHandler workItemHandler = new TestWorkItemHandler();
 		swflMgr.registerWorkItemHandler("Human Task", workItemHandler);
 		long currentProcessInst = swflMgr.startProcess("com.sample.evaluation");
-		if(1==0)throw new Exception("Break out before completion for testing"); 
+		if(1==1)throw new Exception("Break out before completion for testing"); 
 //		swflMgr.restoreWorkflowSession();
 		 
 		System.out.println("Process instance length="+currentProcessInst);

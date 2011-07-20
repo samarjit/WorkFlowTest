@@ -11,8 +11,12 @@ public class TestWorkItemHandler implements WorkItemHandler {
 	
     private List<WorkItem> workItems = new ArrayList<WorkItem>();
     
+    /**
+     * On start of work item. Called from internalTrigger()
+     */
     public void executeWorkItem(WorkItem workItem, WorkItemManager manager) {
-        workItems.add(workItem);
+    	workItems.add(workItem);
+    	System.out.println("Workitem queuing "+workItems.size()+"  "+ workItem);
     }
     
     public void abortWorkItem(WorkItem workItem, WorkItemManager manager) {
@@ -37,7 +41,7 @@ public class TestWorkItemHandler implements WorkItemHandler {
     
     public List<WorkItem> getWorkItems() {
     	List<WorkItem> result = new ArrayList<WorkItem>(workItems);
-    	workItems.clear();
+//    	workItems.clear();
     	return result;
     }
     

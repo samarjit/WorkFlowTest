@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.openjpa.util.UnsupportedException;
+import org.apache.xml.utils.UnImplNode;
 import org.drools.WorkItemHandlerNotFoundException;
 import org.drools.process.instance.WorkItem;
 import org.drools.process.instance.WorkItemManager;
@@ -35,7 +37,8 @@ public class StatelessWorkItemManager implements WorkItemManager{
 		/*  67 */     WorkItemHandler handler = (WorkItemHandler)this.workItemHandlers.get(workItem.getName());
 		/*  68 */     if (handler != null)
 		/*  69 */       handler.executeWorkItem(workItem, this);
-		/*     */     else throw new WorkItemHandlerNotFoundException("Could not find work item handler for " + workItem.getName(), workItem.getName());
+		/*     */     else 
+			            throw new WorkItemHandlerNotFoundException("Could not find work item handler for " + workItem.getName(), workItem.getName());
 		/*     */   }
 		/*     */ 
 	 public void internalAddWorkItem(WorkItem workItem)
@@ -110,6 +113,9 @@ public class StatelessWorkItemManager implements WorkItemManager{
 		}	
 		
 		public void restoreWorkItems(){
-			
+			throw new UnsupportedException("restoreWorkItems():StatelessWorkItemManager");
+		}
+		public Map<String, WorkItemHandler> getWorkItemHandlers() {
+			return workItemHandlers;
 		}
 }

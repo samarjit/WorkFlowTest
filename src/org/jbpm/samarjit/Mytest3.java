@@ -74,7 +74,7 @@ public class Mytest3 {
 		System.out.println("WorkItemID:"+workItem.getId()+" "+workItem.getParameters().get("Comment"));
 		swflMgr.completeWorkItem(workItem.getId(), null);
 		System.out.println("state:"+(StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstance(currentProcessInst).getState() == ProcessInstance.STATE_ACTIVE));
-		swflMgr.registerWorkItemHandler("Human Task", workItemHandler);
+//		swflMgr.registerWorkItemHandler("Human Task", workItemHandler);
 		 workItem = workItemHandler.getWorkItem();
 		  System.out.println("WorkItemID:"+workItem
 				  .getId()+" "+workItem

@@ -35,32 +35,32 @@ public class StatelessWorkItemNodeInstance extends StatelessNodeInstanceImpl{
 		return "["+getClass().getSimpleName()+"("+getNodeName()+"):_"+getNodeId()+":inst:"+getId()+", workItemId:"+workItemId+"]";
 	}
 	
-	public void internalTrigger(final StatelessNodeInstance from, String type) {
-	    	super.internalTrigger(from, type);
-	        // TODO this should be included for ruleflow only, not for BPEL
-//	        if (!Node.CONNECTION_DEFAULT_TYPE.equals(type)) {
-//	            throw new IllegalArgumentException(
-//	                "A WorkItemNode only accepts default incoming connections!");
+//	public void internalTrigger(final StatelessNodeInstance from, String type) {
+//	    	super.internalTrigger(from, type);
+//	        // TODO this should be included for ruleflow only, not for BPEL
+////	        if (!Node.CONNECTION_DEFAULT_TYPE.equals(type)) {
+////	            throw new IllegalArgumentException(
+////	                "A WorkItemNode only accepts default incoming connections!");
+////	        }
+//	        WorkItemNode workItemNode = getWorkItemNode();
+//	        createWorkItem(workItemNode);
+//			if (workItemNode.isWaitForCompletion()) {
+//			    addWorkItemListener();
 //	        }
-	        WorkItemNode workItemNode = getWorkItemNode();
-	        createWorkItem(workItemNode);
-			if (workItemNode.isWaitForCompletion()) {
-			    addWorkItemListener();
-	        }
-			 
-				try {
-				    ((StatelessWorkItemManager) StatelessRuntime.eINSTANCE.getWorkItemManager()).internalExecuteWorkItem(
-		    				(org.drools.process.instance.WorkItem) workItem);
-			    } catch (WorkItemHandlerNotFoundException wihnfe){
-			        getProcessInstance().setState( ProcessInstance.STATE_ABORTED );
-			        throw wihnfe;
-			    }
-			 
-	        if (!workItemNode.isWaitForCompletion()) {
-	            triggerCompleted();
-	        }
-	    	this.workItemId = workItem.getId();
-	    }
+//			 
+//				try {
+//				    ((StatelessWorkItemManager) StatelessRuntime.eINSTANCE.getWorkItemManager()).internalExecuteWorkItem(
+//		    				(org.drools.process.instance.WorkItem) workItem);
+//			    } catch (WorkItemHandlerNotFoundException wihnfe){
+//			        getProcessInstance().setState( ProcessInstance.STATE_ABORTED );
+//			        throw wihnfe;
+//			    }
+//			 
+//	        if (!workItemNode.isWaitForCompletion()) {
+//	            triggerCompleted();
+//	        }
+//	    	this.workItemId = workItem.getId();
+//	    }
 	
 	public void restartWorkItemInst(){
 		 WorkItemNode workItemNode = getWorkItemNode();

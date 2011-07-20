@@ -41,6 +41,7 @@ public class StatelessWorkflowManager {
 	
 	public Collection<NodeInstance> getNextTasks(int processInstanceId){
 		StatelessProcessInstance processInstance = (StatelessProcessInstance) StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstance(processInstanceId);
+		if(processInstance == null)return null;
 		Collection<NodeInstance> nInstances = processInstance.getNodeInstances();
 		for (NodeInstance nodeInstance : nInstances) {
 			System.out.println("#GetTasks() "+nodeInstance.getId()+" "+nodeInstance.getNodeId()+"::"+nodeInstance.getNodeName());
