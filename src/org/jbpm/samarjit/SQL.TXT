@@ -1,6 +1,10 @@
 script;
 SCRIPT   
 CREATE USER IF NOT EXISTS SA SALT '2a9840a48fee3a13' HASH '1b3edf8262afeec2754810d5ceb798e3eda848f13d14a70bc69d70a0b2098811' ADMIN; 
+
+create table ACT_GE_FILEREPO (rev_ number(10), file_name_ varchar(255), wfl_id_ varchar(255), file_type_ varchar(8), 
+MAKER_ID_ varchar(100), maker_date DATE(10), AUTHO_ID_  varchar(100), AUTHOR_DATE_ DATE(10), STATUS_ varchar(8));
+ 
 CREATE CACHED TABLE PUBLIC.ACT_GE_PROPERTY(
     NAME_ VARCHAR(64) NOT NULL,
     VALUE_ VARCHAR(300),

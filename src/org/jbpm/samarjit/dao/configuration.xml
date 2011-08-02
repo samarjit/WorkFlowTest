@@ -5,7 +5,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 
 <configuration>
 <!--Configuration for mybatis-->
-	<properties resource="org/jbpm/samarjit/dao/db.properties">
+	<properties resource="ApplicationResource.properties">
 		<property name="foo" value="bar" />
 	</properties>
 	<!--<typeAliases>

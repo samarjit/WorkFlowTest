@@ -39,15 +39,19 @@ private final String SIMPLE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 
 
 
-public DBConnector() {
+public DBConnector()   {
 	Properties prop = new Properties();
 	ClassLoader loader = this.getClass().getClassLoader();
-//		 prop.load(loader.getResourceAsStream("path_config.properties"));
+			try {
+				prop.load(getClass().getResourceAsStream("db.properties"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	 
-//	 DBURL = prop.getProperty("DBURL");
-//	 DBUSER = prop.getProperty("DBUSER");
-//	 DBPASSWORD = prop.getProperty("DBPASSWORD");
-//	 DRIVERNAME = prop.getProperty("DRIVERNAME");
+	 DBURL = prop.getProperty("jdbc.url");
+	 DBUSER = prop.getProperty("jdbc.username");
+	 DBPASSWORD = prop.getProperty("jdbc.password");
+	 DRIVERNAME = prop.getProperty("jdbc.driver");
 }
 private void debug(int priority, String s){ 
         if(priority>3){ 

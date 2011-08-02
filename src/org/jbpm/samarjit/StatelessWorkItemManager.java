@@ -79,6 +79,7 @@ public class StatelessWorkItemManager implements WorkItemManager{
 		}
 		
 		public void registerWorkItemHandler(String workItemName, WorkItemHandler handler) {
+			//("previous instance exists, and there are pending workitems for this work itm type")
 			/* 136 */     this.workItemHandlers.put(workItemName, handler);
 		}
 		 

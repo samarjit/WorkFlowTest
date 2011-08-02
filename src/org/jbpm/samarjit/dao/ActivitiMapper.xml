@@ -16,9 +16,9 @@
 		<result property="isScope" column="isScope" />
 		<result property="startTime" column="startTime" />
 		<collection property="actRuTasksForProcInstId" column="procInstId" javaType="java.util.ArrayList"   ofType="org.jbpm.samarjit.dto.ActRuTask"
-		select="selectRunTask" ></collection>
+		select="selectRunTasks" ></collection>
 	</resultMap>
-	<select id="selectRunTask"  parameterType="string" resultType="org.jbpm.samarjit.dto.ActRuTask">
+	<select id="selectRunTasks"  parameterType="string" resultType="org.jbpm.samarjit.dto.ActRuTask">
 		select ID_ id,REV_ rev, EXECUTION_ID_ executionId,PROC_INST_ID_ procIntId,PROC_DEF_ID_ procDefId,NAME_ name,
 		 PARENT_TASK_ID_ parentTaskId,DESCRIPTION_ description, TASK_DEF_KEY_ taskDefKey,OWNER_ owner,ASSIGNEE_ asignee,
 		 DELEGATION_ delegation,PRIORITY_ priority,CREATE_TIME_ createTime,DUE_DATE_ dueDate, CLASS_NAME_ className   
@@ -34,5 +34,18 @@
 		START_TIME_ startTime from ACT_RU_EXECUTION 
 	</select>
 	
+	<select id="selectHiTasks"  parameterType="string" resultType="org.jbpm.samarjit.dto.ActHiTaskinst" >
+	   select ID_ id,PROC_DEF_ID_  procDefId,TASK_DEF_KEY_  taskDefKey, PROC_INST_ID_ procInstId, EXECUTION_ID_  executionId, NAME_ name,PARENT_TASK_ID_ parentTaskId,  DESCRIPTION_ description,  OWNER_ owner,ASSIGNEE_ asignee,
+		 START_TIME_ startTime, END_TIME_ endTime,DURATION_ duration,PRIORITY_ priority,DUE_DATE_ dueDate  from ACT_HI_TASKINST 
+	   where PROC_INST_ID_ 	= #{procInstId} 
+	</select>
 	
+	<select id="selectMockRunTasks"  parameterType="string" resultType="org.jbpm.samarjit.mynodeinst.MockStatelessNodeInstance" >
+	   select ID_ id, TASK_DEF_KEY_ nodeId, NAME_ nodeName, 0 state   from ACT_RU_TASK  
+	   where PROC_INST_ID_ 	= #{procInstId} 
+	</select>
+	<select id="selectMockHiTasks"  parameterType="string" resultType="org.jbpm.samarjit.mynodeinst.MockStatelessNodeInstance" >
+	   select ID_ id, TASK_DEF_KEY_ nodeId, NAME_ nodeName, 2 state   from ACT_HI_TASKINST
+	   where PROC_INST_ID_ 	= #{procInstId} 
+	</select>
 </mapper>

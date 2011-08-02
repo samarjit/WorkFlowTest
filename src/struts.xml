@@ -4,6 +4,7 @@
  "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
+    <constant name="struts.custom.i18n.resources" value="ApplicationResource"></constant>
     <package name="hello" extends="struts-default">
         <action name="HelloWorldAction"
          class="com.org.action.HelloWorld" method="viewSuccess">

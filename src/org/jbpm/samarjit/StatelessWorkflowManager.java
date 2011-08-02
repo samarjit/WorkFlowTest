@@ -3,9 +3,12 @@ package org.jbpm.samarjit;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.drools.definition.process.Process;
 import org.drools.runtime.process.NodeInstance;
@@ -31,7 +34,20 @@ public class StatelessWorkflowManager {
 		modules.addSemanticModule(new BPMNExtensionsSemanticModule());
 		XmlProcessReader reader = new XmlProcessReader(modules, this.getClass().getClassLoader());
 		reader.read(is);
-		processes = reader.getProcess();
+		List<Process> tempProcesses = reader.getProcess();
+		if(processes == null)processes = new ArrayList<Process>();
+		HashMap<String, Process> tmphmprocess = new HashMap<String, Process>();
+		for (Process proc : processes) {
+			tmphmprocess.put(proc.getId(), proc);
+		}
+		for (Process tempprocess : tempProcesses) {
+			tmphmprocess.put(tempprocess.getId(),tempprocess);
+		}
+		ArrayList<Process> arprocs = new ArrayList<Process>(); 
+		for (Entry<String, Process> process : tmphmprocess.entrySet()) {
+			arprocs.add(process.getValue());
+		}
+		processes = arprocs;
 		return processes;
 	}
 	
@@ -88,4 +104,7 @@ public class StatelessWorkflowManager {
 		 rws.restoreWorkflowSession(processes);
 	}
 	
+	public List<Process> getProcessList(){
+		return processes;
+	}
 }

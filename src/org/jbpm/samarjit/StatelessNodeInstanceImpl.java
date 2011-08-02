@@ -44,6 +44,9 @@ public  abstract class StatelessNodeInstanceImpl implements StatelessNodeInstanc
 
 	private static final long serialVersionUID = 511l;
 	private static final Pattern PARAMETER_MATCHER = Pattern.compile("#\\{(\\S+)\\}", Pattern.DOTALL);
+	public static final int STARTED = 0;
+	public static final int COMPLETED = 2;
+	
 	private long id;
     private long nodeId;
     private StatelessProcessInstance processInstance;
@@ -66,7 +69,7 @@ public  abstract class StatelessNodeInstanceImpl implements StatelessNodeInstanc
     		hidden = true;
     	}
     	if (!hidden) {
-    		setState(0);
+    		setState(STARTED);
     		WorkflowDAO.createNodeInstance(this);
     		getProcessEventSupport().fireBeforeNodeTriggered(this, null /*kruntime*/);
     	}System.out.println("StatelessNodeInstance():trigger..."+from);
@@ -201,7 +204,7 @@ public  abstract class StatelessNodeInstanceImpl implements StatelessNodeInstanc
 		if (remove) {
             ((org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer())
             	.removeNodeInstance(this);
-            setState(2);//completed
+            setState(COMPLETED);//completed
             WorkflowDAO.completeNodeInstance(this);
         }
         Node node = getNode();

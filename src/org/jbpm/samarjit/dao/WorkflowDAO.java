@@ -11,7 +11,9 @@ import javax.sql.rowset.CachedRowSet;
 import org.apache.ibatis.session.SqlSession;
 import org.jbpm.samarjit.StatelessNodeInstance;
 import org.jbpm.samarjit.dao.PrepstmtDTO.DataType;
+import org.jbpm.samarjit.dto.ActHiTaskinst;
 import org.jbpm.samarjit.dto.ActRuExecution;
+import org.jbpm.samarjit.dto.ActRuTask;
 import org.jbpm.samarjit.mynodeinst.MockStatelessNodeInstance;
 import org.jbpm.workflow.instance.NodeInstance;
 
@@ -226,7 +228,9 @@ public class WorkflowDAO {
 	public static List<ActRuExecution> selectRunningWorkflows() {
 		SqlSession sqlSession = MybatisSessionHelper.eINSTANCE.openSession();
 		DBActivitiMapper dbActivitiMapper = sqlSession.getMapper(DBActivitiMapper.class);
-		return dbActivitiMapper.selectRunningWorkflows();
+		List<ActRuExecution> selectRunningWorkflows = dbActivitiMapper.selectRunningWorkflows();
+		sqlSession.close();
+		return selectRunningWorkflows;
 	}
 	
 	
@@ -234,7 +238,7 @@ public class WorkflowDAO {
 			ArrayList<Long> idList, long  processId) {
 		DBConnector db = new DBConnector();
 		ArrayList<MockStatelessNodeInstance> mockList = null;
-		String qryHist = "select ID_, TASK_DEF_KEY_ from ACT_HI_TASKINST where proc_inst_id_ = ?";
+		String qryHist = "select ID_, TASK_DEF_KEY_, NAME_ from ACT_HI_TASKINST where proc_inst_id_ = ?";
 		PrepstmtDTOArray prepStmtAr = new PrepstmtDTOArray();
 		prepStmtAr.add(DataType.STRING,Long.toString(processId));
 		if(idList.size() >0)qryHist +=" AND TASK_DEF_KEY_ in (";
@@ -254,9 +258,11 @@ public class WorkflowDAO {
 			while(crs.next()){
 				String idStr = crs.getString("ID_");
 				String taskdef = crs.getString("TASK_DEF_KEY_");
+				String nodeName = crs.getString("NAME_");
 				MockStatelessNodeInstance mockNode = new MockStatelessNodeInstance();
 				mockNode.setId(Long.parseLong(idStr));
 				mockNode.setNodeId(Long.parseLong(taskdef));
+				mockNode.setNodeName(nodeName);
 				mockList.add(mockNode);
 			}
 		} catch (SQLException e) {
@@ -271,6 +277,20 @@ public class WorkflowDAO {
 			}
 		}
 		return mockList;
+	}
+
+	public static List<MockStatelessNodeInstance> getHistory(int instanceid) {
+		SqlSession sqlSession = MybatisSessionHelper.eINSTANCE.openSession();
+		DBActivitiMapper dbActivitiMapper = sqlSession.getMapper(DBActivitiMapper.class);
+		List<MockStatelessNodeInstance> historyTasks = dbActivitiMapper.selectMockHiTasks(String.valueOf(instanceid));
+		List<MockStatelessNodeInstance> runningTasks = dbActivitiMapper.selectMockRunTasks(String.valueOf(instanceid));
+		
+		 
+		historyTasks.addAll(runningTasks );
+		
+		sqlSession.close();
+		
+		return historyTasks;
 	}
 
 }

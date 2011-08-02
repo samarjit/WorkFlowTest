@@ -1,11 +1,13 @@
 package org.jbpm.samarjit.mynodeinst;
 
+import org.apache.commons.lang.xwork.NotImplementedException;
 import org.drools.definition.process.Node;
 import org.drools.runtime.process.NodeInstance;
 import org.drools.runtime.process.NodeInstanceContainer;
 import org.drools.runtime.process.WorkflowProcessInstance;
 import org.jbpm.process.instance.ContextInstance;
 import org.jbpm.samarjit.StatelessNodeInstance;
+import org.jbpm.samarjit.StatelessNodeInstanceImpl;
 
 
 
@@ -18,6 +20,18 @@ import org.jbpm.samarjit.StatelessNodeInstance;
  */
 public class MockStatelessNodeInstance implements StatelessNodeInstance {
 
+	private long id;
+	private long nodeId;
+	private String nodeName;
+	private int state =  StatelessNodeInstanceImpl.STARTED; //0 - state is required for differentiating history tasks from running tasks 
+	
+	public int getState(){
+		return state;
+	}
+	public void setState(int statenew){
+		this.state = statenew;
+	}
+	
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -26,12 +40,10 @@ public class MockStatelessNodeInstance implements StatelessNodeInstance {
 		this.nodeId = nodeId;
 	}
 
-	private long id;
-    private long nodeId;
     
 	@Override
 	public String toString() {
-		return "MockStatelessNodeInstance [id=" + id + ", nodeId=" + nodeId
+		return "MockStatelessNodeInstance [id=" + id + ", nodeId=" + nodeId +" state="+state
 				+ "]";
 	}
 
@@ -45,11 +57,13 @@ public class MockStatelessNodeInstance implements StatelessNodeInstance {
 	}
 
 	public Node getNode() {
-		return null;
+		throw new NotImplementedException("Unimplemented for mock node");
+		//return null;
 	}
 
 	public ContextInstance resolveContextInstance(String contextId, Object param) {
-		return null;
+		throw new NotImplementedException("Unimplemented for mock node");
+		//return null;
 	}
 
 	public long getId() {
@@ -65,7 +79,10 @@ public class MockStatelessNodeInstance implements StatelessNodeInstance {
 	}
 
 	public String getNodeName() {
-		throw new RuntimeException("Unimplemented for mock node");
+		return this.nodeName;
+	}
+	public void setNodeName(String nodeName) {
+		this.nodeName = nodeName;
 	}
 
 	public WorkflowProcessInstance getProcessInstance() {

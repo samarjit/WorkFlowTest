@@ -22,6 +22,7 @@ public class TestWorkItemHandler implements WorkItemHandler {
     public void abortWorkItem(WorkItem workItem, WorkItemManager manager) {
     }
     
+    @Deprecated //Do not use as it randomly gets any workitems, keeping this still for test programs to run
     public WorkItem getWorkItem() {
     	if (workItems.size() == 0) {
     		return null;
@@ -37,6 +38,18 @@ public class TestWorkItemHandler implements WorkItemHandler {
     		return result;
     		//throw new IllegalArgumentException("More than one work item active");
     	}
+    }
+    
+    public WorkItem getWorkItem(long id) {
+    	WorkItem result = null;
+    	for (int i =0 ; i < workItems.size(); i++) {
+    		WorkItem workItem = workItems.get(i);
+			if(workItem.getId() == id){
+				result = workItem;
+				this.workItems.remove(workItem);
+			}
+		}
+    	return result;
     }
     
     public List<WorkItem> getWorkItems() {
