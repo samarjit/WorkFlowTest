@@ -38,10 +38,6 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import org.activiti.engine.ActivitiException;
-import org.activiti.engine.impl.util.IoUtil;
-import org.activiti.engine.impl.util.ReflectUtil;
-
 
 /**
  * Represents a canvas on which BPMN 2.0 constructs can be drawn.
@@ -88,15 +84,15 @@ public class ProcessDiagramCanvas {
   // icons are statically loaded for performace
   static {
     try {
-      USERTASK_IMAGE = ImageIO.read(ReflectUtil.getResourceAsStream("org/activiti/engine/impl/bpmn/deployer/user.png"));
-      SCRIPTTASK_IMAGE = ImageIO.read(ReflectUtil.getResourceAsStream("org/activiti/engine/impl/bpmn/deployer/script.png"));
-      SERVICETASK_IMAGE = ImageIO.read(ReflectUtil.getResourceAsStream("org/activiti/engine/impl/bpmn/deployer/service.png"));
-      RECEIVETASK_IMAGE = ImageIO.read(ReflectUtil.getResourceAsStream("org/activiti/engine/impl/bpmn/deployer/receive.png"));
-      SENDTASK_IMAGE = ImageIO.read(ReflectUtil.getResourceAsStream("org/activiti/engine/impl/bpmn/deployer/send.png"));
-      MANUALTASK_IMAGE = ImageIO.read(ReflectUtil.getResourceAsStream("org/activiti/engine/impl/bpmn/deployer/manual.png"));
-      TIMER_IMAGE = ImageIO.read(ReflectUtil.getResourceAsStream("org/activiti/engine/impl/bpmn/deployer/timer.png"));
-      ERROR_THROW_IMAGE = ImageIO.read(ReflectUtil.getResourceAsStream("org/activiti/engine/impl/bpmn/deployer/error_throw.png"));
-      ERROR_CATCH_IMAGE = ImageIO.read(ReflectUtil.getResourceAsStream("org/activiti/engine/impl/bpmn/deployer/error_catch.png"));
+      USERTASK_IMAGE =    ImageIO.read(ReflectUtil.getResourceAsStream("org/jbpm/samarjit/diagram/user.png"));
+      SCRIPTTASK_IMAGE =  ImageIO.read(ReflectUtil.getResourceAsStream("org/jbpm/samarjit/diagram/script.png"));
+      SERVICETASK_IMAGE = ImageIO.read(ReflectUtil.getResourceAsStream("org/jbpm/samarjit/diagram/service.png"));
+      RECEIVETASK_IMAGE = ImageIO.read(ReflectUtil.getResourceAsStream("org/jbpm/samarjit/diagram/receive.png"));
+      SENDTASK_IMAGE =    ImageIO.read(ReflectUtil.getResourceAsStream("org/jbpm/samarjit/diagram/send.png"));
+      MANUALTASK_IMAGE =  ImageIO.read(ReflectUtil.getResourceAsStream("org/jbpm/samarjit/diagram/manual.png"));
+      TIMER_IMAGE =       ImageIO.read(ReflectUtil.getResourceAsStream("org/jbpm/samarjit/diagram/timer.png"));
+      ERROR_THROW_IMAGE = ImageIO.read(ReflectUtil.getResourceAsStream("org/jbpm/samarjit/diagram/error_throw.png"));
+      ERROR_CATCH_IMAGE = ImageIO.read(ReflectUtil.getResourceAsStream("org/jbpm/samarjit/diagram/error_catch.png"));
     } catch (IOException e) {
       LOGGER.warning("Could not load image for process diagram creation: " + e.getMessage());
     }
@@ -152,7 +148,7 @@ public class ProcessDiagramCanvas {
    */
   public InputStream generateImage(String imageType) {
     if (closed) {
-      throw new ActivitiException("ProcessDiagramGenerator already closed");
+      throw new DiagramException("ProcessDiagramGenerator already closed");
     }
     
     ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -167,7 +163,7 @@ public class ProcessDiagramCanvas {
       }
       ImageIO.write(imageToSerialize, imageType, out);
     } catch (IOException e) {
-      throw new ActivitiException("Error while generating process image" , e);
+      throw new DiagramException("Error while generating process image" , e);
     } finally {
       IoUtil.closeSilently(out);
     }
