@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.drools.definition.process.Node;
 import org.drools.definition.process.Process;
 import org.drools.runtime.process.NodeInstance;
 import org.drools.runtime.process.ProcessInstance;
@@ -23,7 +24,7 @@ import org.jbpm.workflow.core.impl.WorkflowProcessImpl;
 import org.xml.sax.SAXException;
 
 public class StatelessWorkflowManager {
-	List<Process> processes = null;
+	Map<String, Process> processes = null;
 	
 	public List<Process> readWorkflowFiles(InputStream is) throws FileNotFoundException, SAXException, IOException{
 		SemanticModules modules = new SemanticModules();
@@ -35,20 +36,20 @@ public class StatelessWorkflowManager {
 		XmlProcessReader reader = new XmlProcessReader(modules, this.getClass().getClassLoader());
 		reader.read(is);
 		List<Process> tempProcesses = reader.getProcess();
-		if(processes == null)processes = new ArrayList<Process>();
+		if(processes == null)processes = new HashMap<String, Process>();
 		HashMap<String, Process> tmphmprocess = new HashMap<String, Process>();
-		for (Process proc : processes) {
-			tmphmprocess.put(proc.getId(), proc);
-		}
+//		for (Process proc : processes) {
+//			tmphmprocess.put(proc.getId(), proc);
+//		}
 		for (Process tempprocess : tempProcesses) {
-			tmphmprocess.put(tempprocess.getId(),tempprocess);
+			processes.put(tempprocess.getId(),tempprocess);
 		}
-		ArrayList<Process> arprocs = new ArrayList<Process>(); 
-		for (Entry<String, Process> process : tmphmprocess.entrySet()) {
-			arprocs.add(process.getValue());
-		}
-		processes = arprocs;
-		return processes;
+//		ArrayList<Process> arprocs = new ArrayList<Process>(); 
+//		for (Entry<String, Process> process : tmphmprocess.entrySet()) {
+//			arprocs.add(process.getValue());
+//		}
+//		processes = arprocs;
+		return (tempProcesses);
 	}
 	
 	public int deploy(){
@@ -73,12 +74,14 @@ public class StatelessWorkflowManager {
 	 */
 	public long startProcess(String processId){
 		ProcessInstance startProcessInstance = null;
-		for (Process process : processes) {
-			WorkflowProcessImpl wp = (WorkflowProcessImpl)process;
-			if(wp.getId().equals(processId)){
-				 startProcessInstance = StatelessRuntime.eINSTANCE.startProcess(wp);
-			}
-		}
+//		for (Process process : processes) {
+//			WorkflowProcessImpl wp = (WorkflowProcessImpl)process;
+//			if(wp.getId().equals(processId)){
+//				 startProcessInstance = StatelessRuntime.eINSTANCE.startProcess(wp);
+//			}
+//		}
+		WorkflowProcessImpl wp = (WorkflowProcessImpl)processes.get(processId);
+		startProcessInstance = StatelessRuntime.eINSTANCE.startProcess(wp);
 		return startProcessInstance.getId();
 	}
 	
@@ -101,10 +104,24 @@ public class StatelessWorkflowManager {
 
 	public void restoreWorkflowSession() {
 		 RestoreWorkflowSession rws = new RestoreWorkflowSession();
-		 rws.restoreWorkflowSession(processes);
+		 rws.restoreWorkflowSession(new ArrayList<Process>(processes.values()));
 	}
 	
 	public List<Process> getProcessList(){
-		return processes;
+		return new ArrayList<Process>(processes.values());
+	}
+
+	public List<Integer> getCoordinatesFromNode(String processId, long nodeId) {
+		List <Integer> coords = new ArrayList<Integer>();
+		WorkflowProcessImpl wp = (WorkflowProcessImpl)processes.get(processId);
+			if(wp.getId().equals(processId)){
+				Node node = wp.getNode(nodeId);
+				coords.add((Integer) node.getMetaData().get("x"));
+				coords.add((Integer) node.getMetaData().get("y"));
+				coords.add((Integer) node.getMetaData().get("height"));
+				coords.add((Integer) node.getMetaData().get("width"));
+			}
+		 
+		return coords;
 	}
 }

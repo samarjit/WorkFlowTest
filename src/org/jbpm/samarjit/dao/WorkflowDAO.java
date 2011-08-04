@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.rowset.CachedRowSet;
 
@@ -291,6 +292,52 @@ public class WorkflowDAO {
 		sqlSession.close();
 		
 		return historyTasks;
+	}
+
+	public static int deployMaker(String wflId, String filename, String filedesc) {
+		SqlSession sqlSession = MybatisSessionHelper.eINSTANCE.openSession();
+		DBActivitiMapper dbActivitiMapper = sqlSession.getMapper(DBActivitiMapper.class);
+		Map deployedWfl = dbActivitiMapper.getDeployedWfl(wflId);
+		int rev = -1;
+		if(deployedWfl != null){
+		String revstr = String.valueOf(deployedWfl.get("REV_"));
+			if(revstr != null && !"".equals(revstr)){
+				rev = Integer.parseInt(revstr);
+			}
+		}
+		String maker = "system";
+		if(rev ==  -1 ){
+			rev = 0 ;
+			System.out.println(String.format("%s %s %s %s %s", rev, wflId,filename, filedesc, maker));
+			dbActivitiMapper.deployMakerInsert(String.valueOf(rev), wflId,filename, filedesc, maker );
+		}else{
+			rev++;
+			dbActivitiMapper.deployMakerUpdate(String.valueOf(rev), wflId,filename, filedesc, maker);
+		}
+		 
+		sqlSession.commit();
+		sqlSession.close();
+		return rev;
+	}
+
+	public static void saveImagePos(String processid, String imgposrelX, String imgposrelY) {
+		SqlSession sqlSession = MybatisSessionHelper.eINSTANCE.openSession();
+		DBActivitiMapper dbActivitiMapper = sqlSession.getMapper(DBActivitiMapper.class);
+		dbActivitiMapper.saveImagePos(  processid,   imgposrelX,   imgposrelY);
+		sqlSession.commit();
+		sqlSession.close();
+	}
+
+	public static List<String> getImage(String processid) {
+		SqlSession sqlSession = MybatisSessionHelper.eINSTANCE.openSession();
+		DBActivitiMapper dbActivitiMapper = sqlSession.getMapper(DBActivitiMapper.class);
+		Map<String, String> imgDtl = dbActivitiMapper.getDeployedWfl(processid);
+		List<String> imgDtllst = new ArrayList<String>();
+		imgDtllst.add(	imgDtl.get("FILE_NAME_"));
+		imgDtllst.add(	imgDtl.get("REL_X_"));
+		imgDtllst.add(	imgDtl.get("REL_Y_"));
+		sqlSession.close();
+		return imgDtllst;
 	}
 
 }

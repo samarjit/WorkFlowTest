@@ -3,6 +3,9 @@ package com.ycs.wfl.action;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,10 +15,12 @@ import java.util.Map;
 
 import net.sf.json.JSONSerializer;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.ApplicationAware;
 import org.drools.definition.process.Process;
+import org.drools.definition.process.WorkflowProcess;
 import org.drools.event.process.ProcessCompletedEvent;
 import org.drools.event.process.ProcessEventListener;
 import org.drools.event.process.ProcessNodeLeftEvent;
@@ -26,17 +31,25 @@ import org.drools.runtime.process.NodeInstance;
 import org.drools.runtime.process.ProcessInstance;
 import org.drools.runtime.process.WorkItem;
 import org.drools.runtime.process.WorkItemHandler;
+import org.jbpm.samarjit.Mytest2;
 import org.jbpm.samarjit.StatelessWorkflowManager;
 import org.jbpm.samarjit.dao.WorkflowDAO;
+import org.jbpm.samarjit.diagram.IoUtil;
+import org.jbpm.samarjit.diagram.ProcessDiagramGenerator;
 import org.jbpm.samarjit.mynodeinst.MockStatelessNodeInstance;
 import org.jbpm.samarjit.mynodeinst.TestWorkItemHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xml.sax.SAXException;
 
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.ycs.wfl.exception.WflException;
 
 /**
+ * http://localhost:8182/WorkFlow/wfl.action?command=deploy&filename=Evaluation.bpmn
+ * http://localhost:8182/WorkFlow/wfl.action?command=getimage&processid=com.sample.evaluation
+ * http://localhost:8182/WorkFlow/wfl.action?command=saveimagpos&processid=com.sample.evaluation
  * http://localhost:8182/WorkFlow/wfl.action?command=readfiles
  * http://localhost:8182/WorkFlow/wfl.action?command=restoresessions
  * http://localhost:8182/WorkFlow/wfl.action?command=getprocesslist
@@ -62,6 +75,8 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 	private long nodeid = -1;
 	private String command = null ;
 	private long workitemid = -1;
+	private String filename = null; 
+	private String filedesc = null; 
 	
 	private InputStream inputStream;
 	//private Map<String, Object> session;
@@ -70,7 +85,12 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 		return inputStream;
 	}
 	
-	Map<String, Object> appContext; 
+	Map<String, Object> appContext;
+
+	private String imgposrelX;
+
+	private String imgposrelY;
+
 	 
 	@SuppressWarnings("unchecked")
 	@Action(value="wfl", results={
@@ -147,7 +167,29 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 			if(command == null || "".equals(command)){
 				throw new WflException("command is missing in request");
 			} 
-				if(command.equals("readfiles")){
+				if(command.equals("deploy")){
+					if(filename == null){
+						throw new WflException("filename is required");
+					}
+					String retStr = deploy(swflMgr);
+					resultHtml = "{deploy: 'success', "+retStr+"}";
+				}
+				else if(command.equals("getimage")){
+					if(processid == null){
+						throw new WflException("processid required");
+					}
+					List<String> imageDtl = WorkflowDAO.getImage(processid);
+					String path =  ServletActionContext.getRequest().getContextPath() + "/deploy/" +imageDtl.get(0)+".png";
+					resultHtml = "{imageurl: '"+path+"', relx:'"+imageDtl.get(1)+"', rely:'"+imageDtl.get(2)+"'}";
+				}
+				else if(command.equals("saveimagepos")){
+					if(processid == null){
+						throw new WflException("processid required");
+					}
+					 WorkflowDAO.saveImagePos(processid, imgposrelX, imgposrelY);
+					 resultHtml = "{imgpos: 'saved'}";
+				}
+				else if(command.equals("readfiles")){
 					System.out.println("locading bpmn files and then caching ..." );
 //					ResourceBundle rb = ResourceBundle.getBundle("ApplicationResource");
 					System.out.println("bpmn.root.path:"+getText("bpmn.root.path"));
@@ -314,16 +356,21 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 					if(instanceid == -1){
 						throw new WflException("instanceid is required");
 					}
+					 
 					
 					List<MockStatelessNodeInstance> mockNodeList = WorkflowDAO.getHistory(instanceid);
 					String temp = "";
 					boolean first = true;
+					
 					for (MockStatelessNodeInstance mockNodeInst : mockNodeList) {
 						temp += (first)?"":",";
 						first = false;
-						temp += "{id:'"+mockNodeInst.getId()+"', nodeid: '"+mockNodeInst.getNodeId()+"', nodename:'"+ mockNodeInst.getNodeName()+"', state:'"+mockNodeInst.getState()+"'}";
+						processid = mockNodeInst.getProcessid();
+						List<Integer> coords = swflMgr.getCoordinatesFromNode(processid, mockNodeInst.getNodeId());
+						temp += "{nodeinstanceid:'"+mockNodeInst.getId()+"', nodeid: '"+mockNodeInst.getNodeId()+"', nodename:'"+ mockNodeInst.getNodeName()+"', state:'"+mockNodeInst.getState()+"'," +
+								"x:'"+coords.get(0)+"',y:'"+coords.get(1)+"',width:'"+coords.get(2)+"',height:'"+coords.get(3)+"'}";
 					}
-					resultHtml = "{history:["+temp+" ]}";
+					resultHtml = "{processid:'"+processid+"',history:["+temp+" ]}";
 				}
 				else if(command.equals("dowork")){
 					if(workitemid == -1){
@@ -360,7 +407,7 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 				 
 				
 				
-			}
+				}
 			if(errors.size() > 0){
 				System.out.println("errors in inputs:"+errors);
 				resultHtml =  "{error: "+ JSONSerializer.toJSON(errors).toString()+"}";
@@ -393,6 +440,41 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 	
 	
 	
+	/**
+	 * Creates version in table and copy to work directory. 
+	 * Copy image to WebContent/deploy folder
+	 * uses: filename
+	 * @param swflMgr 
+	 * @throws IOException 
+	 * @throws SAXException 
+	 * @throws WflException 
+	 */
+	private String deploy(StatelessWorkflowManager swflMgr) throws  SAXException, IOException, WflException {
+		String ctxpath = getText("bpmn.root.path");
+		File file = new File(ctxpath+File.separatorChar+filename);
+		int rev = -1;
+		String wflId = "";
+		try{
+			List<Process> processes = swflMgr.readWorkflowFiles(new FileInputStream(file));
+		WorkflowProcess workflowProcess = (WorkflowProcess) processes.get(0);
+		byte[] diagramBytes = IoUtil.readInputStream(ProcessDiagramGenerator.generatePngDiagram(workflowProcess), null);
+		 
+			File f = new File(ServletActionContext.getServletContext().getRealPath("deploy")+File.separatorChar+filename+".png");
+			FileOutputStream fos = new FileOutputStream(f);
+			System.out.println(f.getAbsolutePath());
+			fos.write(diagramBytes);
+			fos.close();
+			
+			rev = WorkflowDAO.deployMaker(workflowProcess.getId(),filename,filedesc);
+			wflId = workflowProcess.getId();
+		}catch(FileNotFoundException e){
+			throw new WflException("BPMN File Not found- "+filename);
+		}
+		return " rev:'"+rev+",processid:'"+wflId+"'"; 
+	}
+
+
+
 	public int getInstanceid() {
 		return instanceid;
 	}
@@ -463,6 +545,42 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 
 	public void setApplication(Map<String, Object> app) {
 		appContext = app;
+	}
+
+
+
+	public String getFilename() {
+		return filename;
+	}
+
+
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+
+
+	public String getFiledesc() {
+		return filedesc;
+	}
+
+
+
+	public void setFiledesc(String filedesc) {
+		this.filedesc = filedesc;
+	}
+
+
+
+	public void setImgposrelX(String imgposrelX) {
+		this.imgposrelX = imgposrelX;
+	}
+
+
+
+	public void setImgposrelY(String imgposrelY) {
+		this.imgposrelY = imgposrelY;
 	}
 
 }

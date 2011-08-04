@@ -43,7 +43,7 @@ public DBConnector()   {
 	Properties prop = new Properties();
 	ClassLoader loader = this.getClass().getClassLoader();
 			try {
-				prop.load(getClass().getResourceAsStream("db.properties"));
+				prop.load(loader.getResourceAsStream("ApplicationResource.properties"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

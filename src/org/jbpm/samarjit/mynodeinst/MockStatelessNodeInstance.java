@@ -23,6 +23,8 @@ public class MockStatelessNodeInstance implements StatelessNodeInstance {
 	private long id;
 	private long nodeId;
 	private String nodeName;
+	private String processid;
+	
 	private int state =  StatelessNodeInstanceImpl.STARTED; //0 - state is required for differentiating history tasks from running tasks 
 	
 	public int getState(){
@@ -96,5 +98,11 @@ public class MockStatelessNodeInstance implements StatelessNodeInstance {
 	public void setVariable(String arg0, Object arg1) {
 		throw new RuntimeException("Unimplemented for mock node");
 	}
-
+	public String getProcessid() {
+		return processid;
+	}
+	public void setProcessid(String processid) {
+		this.processid = processid;
+	}
+	
 }

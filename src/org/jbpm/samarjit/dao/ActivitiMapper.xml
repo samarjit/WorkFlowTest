@@ -41,11 +41,33 @@
 	</select>
 	
 	<select id="selectMockRunTasks"  parameterType="string" resultType="org.jbpm.samarjit.mynodeinst.MockStatelessNodeInstance" >
-	   select ID_ id, TASK_DEF_KEY_ nodeId, NAME_ nodeName, 0 state   from ACT_RU_TASK  
+	   select ID_ id, TASK_DEF_KEY_ nodeId, NAME_ nodeName, 0 state, PROC_DEF_ID_  processid   from ACT_RU_TASK  
 	   where PROC_INST_ID_ 	= #{procInstId} 
 	</select>
 	<select id="selectMockHiTasks"  parameterType="string" resultType="org.jbpm.samarjit.mynodeinst.MockStatelessNodeInstance" >
-	   select ID_ id, TASK_DEF_KEY_ nodeId, NAME_ nodeName, 2 state   from ACT_HI_TASKINST
+	   select ID_ id, TASK_DEF_KEY_ nodeId, NAME_ nodeName, 2 state, PROC_DEF_ID_  processid   from ACT_HI_TASKINST
 	   where PROC_INST_ID_ 	= #{procInstId} 
 	</select>
+	
+	<select id="getDeployedWfl"  parameterType="string" resultType="java.util.Map" >
+	   select REV_ ,  FILE_NAME_,   WFL_ID_ ,   FILE_TYPE_ ,FILE_DESC_ ,  MAKER_ID_ ,  MAKER_DATE ,  AUTHO_ID_ ,  AUTHOR_DATE_,   STATUS_, REL_X_,   REL_Y_    
+  		from ACT_GE_FILEREPO 
+	   where WFL_ID_	= #{wflId} 
+	</select>
+	
+	<insert id="deployMakerInsert" statementType="PREPARED"  parameterType="java.util.Map">
+	   insert into ACT_GE_FILEREPO (REV_ ,  FILE_NAME_,   WFL_ID_ ,  FILE_TYPE_ ,  MAKER_ID_ ,  MAKER_DATE ,  AUTHO_ID_ ,  AUTHOR_DATE_,   STATUS_, FILE_DESC_ ) 
+	   values (#{rev},#{filename},#{wflId}, 'bpmn', #{maker} , sysdate,'',null,'A',#{filedesc} )
+	</insert>
+	
+	<update id="deployMakerUpdate"  statementType="PREPARED" parameterType="map" >
+	   update ACT_GE_FILEREPO set REV_ = #{rev} ,  FILE_NAME_ = #{filename}, FILE_TYPE_ ='bpmn' ,FILE_DESC_  = #{filedesc} ,
+	     MAKER_ID_= #{maker} ,  MAKER_DATE = sysdate , STATUS_ = 'A' 
+	   where WFL_ID_ 	= #{wflId} 
+	</update>
+	
+	<update id="saveImagePos" parameterType="java.util.Map">
+		update ACT_GE_FILEREPO set REL_X_ = #{relx},   REL_Y_ = #{rely}
+		where WFL_ID_ 	= #{wflId}
+	</update>
 </mapper>
