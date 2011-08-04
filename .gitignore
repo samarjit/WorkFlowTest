@@ -1,0 +1,9 @@
+build
+bin
+.svn
+.git
+classes
+target
+.classpath
+.project
+.settings
