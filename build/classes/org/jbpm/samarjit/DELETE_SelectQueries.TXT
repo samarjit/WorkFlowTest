@@ -1,0 +1,14 @@
+select * from ACT_GE_PROPERTY ;
+
+select * from ACT_RU_TASK order by id_ ;
+select * from ACT_HI_TASKINST ;
+
+select * from ACT_RU_EXECUTION ;
+--select * from INformation_schema.tables  where table_name in ('ACT_HI_PROCINST','ACT_RU_EXECUTION');
+
+
+select * from ACT_HI_PROCINST ;
+
+delete from ACT_RU_TASK ;delete from  ACT_RU_EXECUTION ;delete from ACT_HI_TASKINST ; delete from ACT_HI_PROCINST; commit;
+select * from ACT_GE_BYTEARRAY ;
+select * from ACT_RU_IDENTITYLINK;

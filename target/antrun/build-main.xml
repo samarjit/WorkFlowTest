@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main" id="start.h2">
+  <property name="myclasspath" refid="maven.plugin.classpath"/>
+  <echo message="starting h2 with classpath ${myclasspath}"/>
+  <java spawn="true" fork="true" classname="org.h2.tools.Console">
+    <classpath refid="maven.plugin.classpath"/>
+  </java>
+</target>
+</project>

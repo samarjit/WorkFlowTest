@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+		"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="org.jbpm.samarjit.dao.DBActivitiMapper">
+	<resultMap type="org.jbpm.samarjit.dto.ActRuExecution" id="selectTask">
+	    <id property="id" column="id" />
+	    <result property="rev" column="rev" />
+		<!--<result property="procInstId" column="procInstId" />
+		--><result property="businessKey" column="businessKey" />
+		<result property="parentId" column="parentId" />
+		<result property="procDefId" column="procDefId" />
+		<result property="superExec" column="superExec" />
+		<result property="actId" column="actId" />
+		<result property="isActive" column="isActive" />
+		<result property="isConcurrent" column="isConcurrent" />
+		<result property="isScope" column="isScope" />
+		<result property="startTime" column="startTime" />
+		<collection property="actRuTasksForProcInstId" column="procInstId" javaType="java.util.ArrayList"   ofType="org.jbpm.samarjit.dto.ActRuTask"
+		select="selectRunTasks" ></collection>
+	</resultMap>
+	<select id="selectRunTasks"  parameterType="string" resultType="org.jbpm.samarjit.dto.ActRuTask">
+		select ID_ id,REV_ rev, EXECUTION_ID_ executionId,PROC_INST_ID_ procIntId,PROC_DEF_ID_ procDefId,NAME_ name,
+		 PARENT_TASK_ID_ parentTaskId,DESCRIPTION_ description, TASK_DEF_KEY_ taskDefKey,OWNER_ owner,ASSIGNEE_ asignee,
+		 DELEGATION_ delegation,PRIORITY_ priority,CREATE_TIME_ createTime,DUE_DATE_ dueDate, CLASS_NAME_ className   
+		  
+		from ACT_RU_TASK 
+		where   PROC_INST_ID_ = #{procInstId}
+		order by id_ 
+	</select>
+	<select id="selectRunningWorkflows"    
+		resultMap="selectTask">
+		select ID_ id,REV_ rev ,PROC_INST_ID_ procInstId,BUSINESS_KEY_ businessKey,PARENT_ID_ parentId,PROC_DEF_ID_ procDefId,
+		SUPER_EXEC_ superExec,ACT_ID_ actId,IS_ACTIVE_ isActive ,IS_CONCURRENT_ isConcurrent,IS_SCOPE_ isScope,
+		START_TIME_ startTime from ACT_RU_EXECUTION 
+	</select>
+	
+	<select id="selectHiTasks"  parameterType="string" resultType="org.jbpm.samarjit.dto.ActHiTaskinst" >
+	   select ID_ id,PROC_DEF_ID_  procDefId,TASK_DEF_KEY_  taskDefKey, PROC_INST_ID_ procInstId, EXECUTION_ID_  executionId, NAME_ name,PARENT_TASK_ID_ parentTaskId,  DESCRIPTION_ description,  OWNER_ owner,ASSIGNEE_ asignee,
+		 START_TIME_ startTime, END_TIME_ endTime,DURATION_ duration,PRIORITY_ priority,DUE_DATE_ dueDate  from ACT_HI_TASKINST 
+	   where PROC_INST_ID_ 	= #{procInstId} 
+	</select>
+	
+	<select id="selectMockRunTasks"  parameterType="string" resultType="org.jbpm.samarjit.mynodeinst.MockStatelessNodeInstance" >
+	   select ID_ id, TASK_DEF_KEY_ nodeId, NAME_ nodeName, 0 state, PROC_DEF_ID_  processid   from ACT_RU_TASK  
+	   where PROC_INST_ID_ 	= #{procInstId} 
+	</select>
+	<select id="selectMockHiTasks"  parameterType="string" resultType="org.jbpm.samarjit.mynodeinst.MockStatelessNodeInstance" >
+	   select ID_ id, TASK_DEF_KEY_ nodeId, NAME_ nodeName, 2 state, PROC_DEF_ID_  processid   from ACT_HI_TASKINST
+	   where PROC_INST_ID_ 	= #{procInstId} 
+	</select>
+	
+	<select id="getDeployedWfl"  parameterType="string" resultType="java.util.Map" >
+	   select REV_ ,  FILE_NAME_,   WFL_ID_ ,   FILE_TYPE_ ,FILE_DESC_ ,  MAKER_ID_ ,  MAKER_DATE ,  AUTHO_ID_ ,  AUTHOR_DATE_,   STATUS_, REL_X_,   REL_Y_    
+  		from ACT_GE_FILEREPO 
+	   where WFL_ID_	= #{wflId} 
+	</select>
+	
+	<insert id="deployMakerInsert" statementType="PREPARED"  parameterType="java.util.Map">
+	   insert into ACT_GE_FILEREPO (REV_ ,  FILE_NAME_,   WFL_ID_ ,  FILE_TYPE_ ,  MAKER_ID_ ,  MAKER_DATE ,  AUTHO_ID_ ,  AUTHOR_DATE_,   STATUS_, FILE_DESC_ ) 
+	   values (#{rev},#{filename},#{wflId}, 'bpmn', #{maker} , sysdate,'',null,'A',#{filedesc} )
+	</insert>
+	
+	<update id="deployMakerUpdate"  statementType="PREPARED" parameterType="map" >
+	   update ACT_GE_FILEREPO set REV_ = #{rev} ,  FILE_NAME_ = #{filename}, FILE_TYPE_ ='bpmn' ,FILE_DESC_  = #{filedesc} ,
+	     MAKER_ID_= #{maker} ,  MAKER_DATE = sysdate , STATUS_ = 'A' 
+	   where WFL_ID_ 	= #{wflId} 
+	</update>
+	
+	<update id="saveImagePos" parameterType="java.util.Map">
+		update ACT_GE_FILEREPO set REL_X_ = #{relx},   REL_Y_ = #{rely}
+		where WFL_ID_ 	= #{wflId}
+	</update>
+</mapper>

@@ -98,6 +98,7 @@ function drawOverlay(){
 <input 	type="hidden" id="command" name="command" /> 
  
 <input id="instanceid" name="instanceid"	value="241" />
+<button type="button" onclick="drawOverlay()">Draw Overlay</button>
 <input id="processid" name="processid"	value="com.sample.evaluation" />
     <button type="button" onclick="getImageData()">Get Image</button>
 <input id="imgurl" 	value="<%=request.getContextPath()%>/deploy/Evaluation.bpmn.png" />
