@@ -80,6 +80,9 @@ public class StatelessWorkflowManager {
 //				 startProcessInstance = StatelessRuntime.eINSTANCE.startProcess(wp);
 //			}
 //		}
+		if(processes == null || processes.get(processId) == null){
+			return -1;
+		}
 		WorkflowProcessImpl wp = (WorkflowProcessImpl)processes.get(processId);
 		startProcessInstance = StatelessRuntime.eINSTANCE.startProcess(wp);
 		return startProcessInstance.getId();
@@ -123,5 +126,9 @@ public class StatelessWorkflowManager {
 			}
 		 
 		return coords;
+	}
+	
+	public boolean isProcessLoaded(){
+		return processes != null;
 	}
 }

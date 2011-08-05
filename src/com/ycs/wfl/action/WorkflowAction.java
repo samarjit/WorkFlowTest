@@ -47,7 +47,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.ycs.wfl.exception.WflException;
 
 /**
- * http://localhost:8182/WorkFlow/wfl.action?command=deploy&filename=Evaluation.bpmn
+ * http://localhost:8182/WorkFlow/wfl.action?command=deploy&filename=Evaluation.bpmn 
  * http://localhost:8182/WorkFlow/wfl.action?command=getimage&processid=com.sample.evaluation
  * http://localhost:8182/WorkFlow/wfl.action?command=saveimagpos&processid=com.sample.evaluation
  * http://localhost:8182/WorkFlow/wfl.action?command=readfiles
@@ -193,11 +193,11 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 				else if(command.equals("readfiles")){
 					System.out.println("locading bpmn files and then caching ..." );
 //					ResourceBundle rb = ResourceBundle.getBundle("ApplicationResource");
-					System.out.println("bpmn.root.path:"+getText("bpmn.root.path"));
+					System.out.println("bpmn.deployed.path:"+getText("bpmn.deployed.path"));
 //					String realpath = ServletActionContext.getServletContext().getRealPath("WEB-INF/classes/bpmmnfiles");
 //					System.out.println(realpath);
-					String ctxpath = getText("bpmn.root.path");
-					File file = new File(ctxpath);
+					String deployedPath = getText("bpmn.deployed.path");
+					File file = new File(deployedPath);
 					System.out.println(file.exists());
 					System.out.println(file.isDirectory());
 					
@@ -212,7 +212,7 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 							}
 						}
 					}else{
-						throw new WflException("Directory not found" + ctxpath);
+						throw new WflException("Directory not found" + deployedPath);
 					}
 					appContext.put("W_PROCESS", swflMgr);
 					resultHtml = "{readfiles: 'success'}";
@@ -220,6 +220,10 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 				else if(command.equals("restoresessions")){
 					testWorkItemHandler = new TestWorkItemHandler();
 					swflMgr.registerWorkItemHandler("Human Task", testWorkItemHandler);
+					
+					if(!swflMgr.isProcessLoaded())
+						throw new WflException("readfiles must be called before getprocesslist");
+					
 					swflMgr.restoreWorkflowSession();
 					 Map<String, WorkItemHandler> workItemHandlers = swflMgr.getRuntime().getWorkItemManager().getWorkItemHandlers();
 					 if(workItemHandlers.containsKey("Human Task")){
@@ -229,7 +233,11 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 					resultHtml = "{restoresession: 'success'}";
 				}
 				else if(command.equals("getprocesslist" )){
-					List<Process> processList = swflMgr.getProcessList();
+					List<Process> processList = null;
+						if(!swflMgr.isProcessLoaded())
+							throw new WflException("readfiles must be called before getprocesslist");
+						processList = swflMgr.getProcessList();
+					
 					String temp = "";
 					boolean first = true;
 					if(processList != null){
@@ -268,6 +276,9 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 					if(processid == null){
 						errors.add("processid is required");
 					}
+					if(!swflMgr.isProcessLoaded())
+						throw new WflException("readfiles must be called before createprocessinstance");
+					
 					if(processid != null){
 						if(testWorkItemHandler == null){
 							testWorkItemHandler = new TestWorkItemHandler();
@@ -451,26 +462,67 @@ public class  WorkflowAction extends ActionSupport implements ApplicationAware{
 	 * @throws WflException 
 	 */
 	private String deploy(StatelessWorkflowManager swflMgr) throws  SAXException, IOException, WflException {
-		String ctxpath = getText("bpmn.root.path");
-		File file = new File(ctxpath+File.separatorChar+filename);
+		String tempPath = getText("bpmn.temp.path");
+		String deployedPath = getText("bpmn.deployed.path");
+		File deployedfile = new File(deployedPath+File.separatorChar+filename);
+		File tempFile = new File(tempPath+File.separatorChar+filename);
 		int rev = -1;
 		String wflId = "";
 		try{
-			List<Process> processes = swflMgr.readWorkflowFiles(new FileInputStream(file));
+			List<Process> processes = swflMgr.readWorkflowFiles(new FileInputStream(tempFile));
 		WorkflowProcess workflowProcess = (WorkflowProcess) processes.get(0);
 		byte[] diagramBytes = IoUtil.readInputStream(ProcessDiagramGenerator.generatePngDiagram(workflowProcess), null);
 		 
 			File f = new File(ServletActionContext.getServletContext().getRealPath("deploy")+File.separatorChar+filename+".png");
-			try{f.createNewFile();
+			try{
+				if(f.exists()){
+					f.delete();
+				}
+				f.createNewFile();
 			
+				FileOutputStream fos = new FileOutputStream(f);
+				System.out.println(f.getAbsolutePath());
+				fos.write(diagramBytes);
+				fos.close();
 			}catch(IOException e){
 				System.out.println(e);
 				throw new WflException("image file creation error");
 				}
-			FileOutputStream fos = new FileOutputStream(f);
-			System.out.println(f.getAbsolutePath());
-			fos.write(diagramBytes);
-			fos.close();
+			
+			FileInputStream from = null;
+			FileOutputStream to = null;
+			try {
+				if (deployedfile.exists()) {
+					deployedfile.delete();
+				}
+				deployedfile.createNewFile();
+
+				from = new FileInputStream(tempFile);
+				to = new FileOutputStream(deployedfile);
+				byte[] buffer = new byte[4096];
+				int bytesRead;
+
+				while ((bytesRead = from.read(buffer)) != -1)
+					to.write(buffer, 0, bytesRead); // write
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new WflException("BPMN File copy error whily deploying");
+			} finally {
+				if (from != null)
+					try {
+						from.close();
+					} catch (IOException e) {
+						;
+					}
+				if (to != null)
+					try {
+						to.close();
+					} catch (IOException e) {
+						;
+					}
+			}
+			System.out.println("temp file deletion result:"+tempFile.delete());
 			
 			rev = WorkflowDAO.deployMaker(workflowProcess.getId(),filename,filedesc);
 			wflId = workflowProcess.getId();
